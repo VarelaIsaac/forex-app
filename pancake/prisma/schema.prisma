@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String        @id @default(uuid())
+  email          String        @unique
+  name           String
+  nombre         String?
+  password       String
+  auth0Id        String?       @map("auth0_id")
+  picture        String?
+  isDemoAccount  Boolean       @default(false) @map("is_demo_account")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  
+  portfolios     Portfolio[]
+  trades         Trade[]
+  transactions   Transaction[]
+
+  @@map("users")
+}
+
+model Portfolio {
+  id           Int           @id @default(autoincrement())
+  userId       String        @map("user_id")
+  balance      Decimal       @default(0) @db.Decimal(10, 2)
+  currency     String        @default("USD")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trades       Trade[]
+  transactions Transaction[]
+
+  @@map("portfolio")
+}
+
+model Trade {
+  id           Int          @id @default(autoincrement())
+  userId       String       @map("user_id")
+  portfolioId  Int          @map("portfolio_id")
+  currencyPair String       @map("currency_pair")
+  tradeType    TradeType    @map("trade_type")
+  amount       Decimal      @db.Decimal(10, 2)
+  entryPrice   Decimal      @map("entry_price") @db.Decimal(10, 6)
+  exitPrice    Decimal?     @map("exit_price") @db.Decimal(10, 6)
+  status       TradeStatus  @default(OPEN)
+  profitLoss   Decimal?     @map("profit_loss") @db.Decimal(10, 2)
+  openedAt     DateTime     @default(now()) @map("opened_at")
+  closedAt     DateTime?    @map("closed_at")
+  
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portfolio    Portfolio    @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@map("trade")
+}
+
+model Transaction {
+  id             Int               @id @default(autoincrement())
+  userId         String            @map("user_id")
+  portfolioId    Int               @map("portfolio_id")
+  type           TransactionType
+  amount         Decimal           @db.Decimal(10, 2)
+  status         TransactionStatus @default(PENDING)
+  paypalOrderId  String?           @map("paypal_order_id")
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+  
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portfolio      Portfolio         @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@map("transaction")
+}
+
+enum TradeType {
+  BUY
+  SELL
+}
+
+enum TradeStatus {
+  OPEN
+  CLOSED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
