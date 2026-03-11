@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, UseGuards, Request, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { TradingService } from './trading.service';
+import { IndicatorsService } from './indicators.service';
 import { TwelveDataService, ForexQuote } from '../twelve-data/twelve-data.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OpenTradeDto, CloseTradeDto } from './dto';
@@ -13,6 +14,7 @@ export class TradingController {
   constructor(
     private tradingService: TradingService,
     private twelveDataService: TwelveDataService,
+    private indicatorsService: IndicatorsService,
   ) {}
 
   /**
@@ -221,5 +223,122 @@ export class TradingController {
   })
   async getPortfolioGrowth(@Request() req) {
     return await this.tradingService.getPortfolioGrowth(req.user.userId);
+  }
+
+  /**
+   * Get historical rates from Frankfurter
+   */
+  @Get('historical/:from/:to')
+  @ApiOperation({ 
+    summary: 'Get historical exchange rates',
+    description: 'Retrieve historical forex data from Frankfurter (your Docker instance)',
+  })
+  @ApiParam({ name: 'from', example: 'EUR', description: 'Base currency' })
+  @ApiParam({ name: 'to', example: 'USD', description: 'Quote currency' })
+  @ApiQuery({ name: 'days', required: false, example: 90, description: 'Number of days of history (default: 90)' })
+  @ApiResponse({ status: 200, description: 'Historical data retrieved successfully' })
+  async getHistoricalRates(
+    @Param('from') from: string,
+    @Param('to') to: string,
+    @Query('days') days?: string,
+  ) {
+    const numDays = days ? parseInt(days) : 90;
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - numDays);
+
+    const formatDate = (date: Date) => date.toISOString().split('T')[0];
+
+    return await this.indicatorsService.getHistoricalRates(
+      from,
+      to,
+      formatDate(startDate),
+      formatDate(endDate),
+    );
+  }
+
+  /**
+   * Get technical analysis with indicators (RSI, MACD, Bollinger Bands)
+   */
+  @Get('analysis/:from/:to')
+  @ApiOperation({ 
+    summary: 'Get complete technical analysis',
+    description: 'Get historical data + RSI + MACD + Bollinger Bands for a currency pair',
+  })
+  @ApiParam({ name: 'from', example: 'EUR', description: 'Base currency' })
+  @ApiParam({ name: 'to', example: 'USD', description: 'Quote currency' })
+  @ApiQuery({ name: 'days', required: false, example: 90, description: 'Number of days of history (default: 90)' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Technical analysis data retrieved successfully',
+    schema: {
+      example: {
+        ohlcData: [
+          { date: '2026-01-01', open: 1.0876, high: 1.0887, low: 1.0865, close: 1.0876 },
+        ],
+        indicators: {
+          rsi: [45.2, 52.3, 58.1],
+          macd: {
+            MACD: [0.0012, 0.0015, 0.0018],
+            signal: [0.0010, 0.0012, 0.0014],
+            histogram: [0.0002, 0.0003, 0.0004],
+          },
+          bollingerBands: {
+            upper: [1.0920, 1.0925, 1.0930],
+            middle: [1.0876, 1.0880, 1.0885],
+            lower: [1.0832, 1.0835, 1.0840],
+          },
+        },
+      },
+    },
+  })
+  async getTechnicalAnalysis(
+    @Param('from') from: string,
+    @Param('to') to: string,
+    @Query('days') days?: string,
+  ) {
+    const numDays = days ? parseInt(days) : 90;
+    return await this.indicatorsService.getTechnicalAnalysis(from, to, numDays);
+  }
+
+  /**
+   * Get RSI only
+   */
+  @Get('indicators/rsi/:from/:to')
+  @ApiOperation({ 
+    summary: 'Calculate RSI (Relative Strength Index)',
+    description: 'Get RSI indicator values for a currency pair',
+  })
+  @ApiParam({ name: 'from', example: 'EUR', description: 'Base currency' })
+  @ApiParam({ name: 'to', example: 'USD', description: 'Quote currency' })
+  @ApiQuery({ name: 'period', required: false, example: 14, description: 'RSI period (default: 14)' })
+  @ApiQuery({ name: 'days', required: false, example: 90, description: 'Number of days of history (default: 90)' })
+  @ApiResponse({ status: 200, description: 'RSI values calculated successfully' })
+  async getRSI(
+    @Param('from') from: string,
+    @Param('to') to: string,
+    @Query('period') period?: string,
+    @Query('days') days?: string,
+  ) {
+    const rsiPeriod = period ? parseInt(period) : 14;
+    const numDays = days ? parseInt(days) : 90;
+
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - numDays);
+
+    const formatDate = (date: Date) => date.toISOString().split('T')[0];
+
+    const historicalData = await this.indicatorsService.getHistoricalRates(
+      from,
+      to,
+      formatDate(startDate),
+      formatDate(endDate),
+    );
+
+    const closePrices = historicalData.map(d => d.close);
+    const rsi = this.indicatorsService.calculateRSI(closePrices, rsiPeriod);
+
+    return { rsi, dates: historicalData.slice(-rsi.length).map(d => d.date) };
   }
 }
