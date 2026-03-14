@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsEnum, IsNumber, Min } from 'class-validator';
+import { IsString, IsEnum, IsNumber, Min, IsOptional } from 'class-validator';
 import { TradeType } from '@prisma/client';
 
 export class OpenTradeDto {
@@ -27,4 +27,14 @@ export class OpenTradeDto {
   @IsNumber()
   @Min(1, { message: 'Trade amount must be at least $1' })
   amount: number;
+
+  @ApiProperty({
+    description: 'Optional session wallet to fund the trade from',
+    minimum: 1,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(1, { message: 'Session ID must be positive when provided' })
+  sessionId?: number;
 }

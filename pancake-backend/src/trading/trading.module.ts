@@ -7,6 +7,7 @@ import { IndicatorsService } from './indicators.service';
 import { TwelveDataModule } from '../twelve-data/twelve-data.module';
 import { PortfolioModule } from '../portfolio/portfolio.module';
 import { EventsModule } from '../events/events.module';
+import { SessionsModule } from '../sessions/sessions.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { EventsModule } from '../events/events.module';
     TwelveDataModule,
     PortfolioModule,
     EventsModule,
+    SessionsModule,
   ],
   controllers: [TradingController],
   providers: [TradingService, IndicatorsService],

@@ -1,0 +1,88 @@
+# Pancake, a Forex Trading Platform - Next.js
+
+## 🚀 Quick Start
+
+### Backend (NestJS)
+```bash
+cd pancake-backend
+npm install
+npm run start:dev
+```
+The backend will run on **http://localhost:3001**
+
+### Frontend (Next.js)
+```bash
+cd pancake-nextjs
+npm install
+npm run dev
+```
+The frontend will run on **http://localhost:3000**
+
+## 📁 Project Structure
+
+```
+forex-app/
+├── pancake-backend/     # NestJS API (Port 3001)
+│   ├── src/
+│   │   ├── auth/       # Authentication
+│   │   ├── trading/    # Trading operations
+│   │   ├── portfolio/  # Portfolio management
+│   │   └── events/     # WebSocket gateway
+│   └── prisma/         # Database schema
+│
+├── pancake-nextjs/     # Next.js Frontend (Port 3000)
+│   ├── app/            # Next.js App Router
+│   │   ├── page.tsx   # Dashboard page
+│   │   └── layout.tsx # Root layout
+│   └── components/     # React components
+│       ├── dashboard/ # Dashboard components
+│       └── ui/        # Shadcn UI components
+│
+└── pancake-frontend/   # Vite (legacy - can be removed)
+```
+
+## 🔧 Configuration
+
+### Backend (.env)
+- `PORT=3001` - Backend API port
+- `JWT_SECRET` - JWT authentication secret
+- `DATABASE_URL` - PostgreSQL connection string
+
+### Frontend (.env.local)
+- `NEXT_PUBLIC_API_URL=http://localhost:3001` - Backend API URL
+- `NEXT_PUBLIC_WS_URL=ws://localhost:3001` - WebSocket URL
+
+## 🎨 Design Features
+
+- Modern dark theme with OKLCH color space
+- Real-time currency charts
+- WebSocket live price updates
+- Responsive dashboard layout
+- Educational glossary panel
+- Quick trade interface
+
+## 🔗 API Endpoints
+
+- `POST /auth/login` - User authentication
+- `POST /auth/signup` - User registration
+- `GET /trading/pairs` - Get currency pairs
+- `POST /trading/open` - Open a trade
+- `POST /trading/close` - Close a trade
+- `GET /portfolio/balance` - Get user balance
+- `WS /` - WebSocket for real-time updates
+
+## 📚 Documentation
+
+API documentation is available at: **http://localhost:3001/api**
+
+## ✅ Next.js vs Vite
+
+**Why Next.js?**
+- ✅ Built-in routing with file-based structure
+- ✅ Server-side rendering for better SEO
+- ✅ API routes for backend integration
+- ✅ Better production optimization
+- ✅ Image optimization out of the box
+- ✅ Native TypeScript support
+
+The design is identical to the Vite version but with Next.js benefits!

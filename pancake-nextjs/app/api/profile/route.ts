@@ -1,0 +1,57 @@
+import { NextResponse } from "next/server"
+import { auth0 } from "@/lib/auth0"
+
+export async function GET() {
+  const session = await auth0.getSession()
+
+  if (!session?.user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  if (!apiUrl) {
+    return NextResponse.json({ error: "API URL not configured" }, { status: 500 })
+  }
+
+  const { accessToken } = await auth0.getAccessToken()
+  if (!accessToken) {
+    return NextResponse.json({ error: "Missing access token" }, { status: 401 })
+  }
+
+  const syncResponse = await fetch(`${apiUrl}/auth/sync`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: session.user.email,
+      name: session.user.name ?? session.user.nickname ?? "Trader",
+      picture: session.user.picture,
+      auth0Id: session.user.sub,
+    }),
+  })
+
+  if (!syncResponse.ok) {
+    return NextResponse.json(
+      { error: "Failed to sync user" },
+      { status: syncResponse.status }
+    )
+  }
+
+  const response = await fetch(`${apiUrl}/users/profile`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+    cache: "no-store",
+  })
+
+  if (!response.ok) {
+    return NextResponse.json(
+      { error: "Failed to load profile" },
+      { status: response.status }
+    )
+  }
+
+  const data = await response.json()
+  return NextResponse.json(data)
+}

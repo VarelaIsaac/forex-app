@@ -13,6 +13,7 @@ import { PortfolioModule } from './portfolio/portfolio.module';
 import { EventsModule } from './events/events.module';
 import { EducationModule } from './education/education.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { SessionsModule } from './sessions/sessions.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PrismaModule } from './prisma/prisma.module';
     PortfolioModule, 
     EventsModule,
     EducationModule,
+    SessionsModule,
   ],
   controllers: [AppController],
   providers: [

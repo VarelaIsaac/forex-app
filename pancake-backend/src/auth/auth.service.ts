@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { PortfolioService } from '../portfolio/portfolio.service';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -97,9 +98,15 @@ export class AuthService {
         });
       } else {
         // Create new user
+        const randomPassword = await bcrypt.hash(
+          crypto.randomUUID(),
+          10,
+        );
         user = await this.usersService.create({
           email: userData.email,
           name: userData.name,
+          nombre: userData.name,
+          password: randomPassword,
           picture: userData.picture,
           auth0Id: userData.auth0Id,
         });

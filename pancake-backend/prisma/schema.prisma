@@ -18,12 +18,14 @@ model User {
   auth0Id        String?       @map("auth0_id")
   picture        String?
   isDemoAccount  Boolean       @default(false) @map("is_demo_account")
+  tradeCount     Int           @default(0) @map("trade_count")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
   
   portfolios     Portfolio[]
   trades         Trade[]
   transactions   Transaction[]
+  sessions       Session[]
 
   @@map("users")
 }
@@ -39,6 +41,7 @@ model Portfolio {
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   trades       Trade[]
   transactions Transaction[]
+  sessions     Session[]
 
   @@map("portfolio")
 }
@@ -47,6 +50,7 @@ model Trade {
   id           Int          @id @default(autoincrement())
   userId       String       @map("user_id")
   portfolioId  Int          @map("portfolio_id")
+  sessionId    Int?         @map("session_id")
   currencyPair String       @map("currency_pair")
   tradeType    TradeType    @map("trade_type")
   amount       Decimal      @db.Decimal(10, 2)
@@ -59,6 +63,7 @@ model Trade {
   
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   portfolio    Portfolio    @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  session      Session?     @relation(fields: [sessionId], references: [id], onDelete: SetNull)
 
   @@map("trade")
 }
@@ -80,6 +85,24 @@ model Transaction {
   @@map("transaction")
 }
 
+model Session {
+  id              Int            @id @default(autoincrement())
+  userId          String         @map("user_id")
+  portfolioId     Int            @map("portfolio_id")
+  name            String?
+  status          SessionStatus  @default(ACTIVE)
+  startingBalance Decimal        @map("starting_balance") @db.Decimal(10, 2)
+  currentBalance  Decimal        @map("current_balance") @db.Decimal(10, 2)
+  createdAt       DateTime       @default(now()) @map("created_at")
+  endedAt         DateTime?      @map("ended_at")
+
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  portfolio       Portfolio      @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  trades          Trade[]
+
+  @@map("sessions")
+}
+
 enum TradeType {
   BUY
   SELL
@@ -99,4 +122,9 @@ enum TransactionStatus {
   PENDING
   COMPLETED
   FAILED
+}
+
+enum SessionStatus {
+  ACTIVE
+  CLOSED
 }

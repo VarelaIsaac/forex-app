@@ -67,6 +67,7 @@ export class TradingController {
         id: 1,
         userId: 1,
         portfolioId: 1,
+        sessionId: 3,
         currencyPair: 'EUR/USD',
         tradeType: 'BUY',
         amount: 1000,
@@ -83,6 +84,7 @@ export class TradingController {
       openTradeDto.currencyPair,
       openTradeDto.tradeType,
       openTradeDto.amount,
+      openTradeDto.sessionId,
     );
   }
 

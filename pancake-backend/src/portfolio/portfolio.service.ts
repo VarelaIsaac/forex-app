@@ -5,12 +5,14 @@ import { Portfolio, Transaction, Trade } from '@prisma/client';
 import { TransactionType, TransactionStatus } from '@prisma/client';
 import { TradeStatus } from '@prisma/client';
 import { EventsGateway } from '../events/events.gateway';
+import { SessionsService } from '../sessions/sessions.service';
 
 @Injectable()
 export class PortfolioService {
   constructor(
     private prisma: PrismaService,
     private eventsGateway: EventsGateway,
+    private sessionsService: SessionsService,
   ) {}
 
   /**
@@ -151,6 +153,9 @@ export class PortfolioService {
    */
   async resetDemoPortfolio(userId: string, initialBalance: number = 10000): Promise<Portfolio> {
     const portfolio = await this.getPortfolioByUserId(userId);
+
+    // Close any active custom sessions and zero their balances
+    await this.sessionsService.closeAllSessionsForUser(userId);
 
     // Close all open trades for this portfolio
     const openTrades = await this.prisma.trade.findMany({

@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Trade } from '@prisma/client';
-import { TradeType, TradeStatus } from '@prisma/client';
+import { Trade, TradeType, TradeStatus, SessionStatus } from '@prisma/client';
 import { TwelveDataService } from '../twelve-data/twelve-data.service';
 import { PortfolioService } from '../portfolio/portfolio.service';
 import { EventsGateway } from '../events/events.gateway';
+import { SessionsService } from '../sessions/sessions.service';
 
 @Injectable()
 export class TradingService {
@@ -13,6 +13,7 @@ export class TradingService {
     private prisma: PrismaService,
     private twelveDataService: TwelveDataService,
     private portfolioService: PortfolioService,
+    private sessionsService: SessionsService,
     private eventsGateway: EventsGateway,
   ) {}
 
@@ -24,43 +25,78 @@ export class TradingService {
     currencyPair: string,
     tradeType: TradeType,
     amount: number,
+    sessionId?: number,
   ): Promise<Trade> {
-    // Get user's portfolio
-    const portfolio = await this.portfolioService.getPortfolioByUserId(userId);
+    let portfolioId: number;
+    let fundingSessionId: number | null = null;
+    let rollback: (() => Promise<void>) | null = null;
 
-    // Check if user has sufficient balance
-    if (Number(portfolio.balance) < amount) {
-      throw new BadRequestException('Insufficient balance to open trade');
+    if (sessionId) {
+      const session = await this.sessionsService.getSessionSummary(userId, sessionId);
+
+      if (session.status !== SessionStatus.ACTIVE) {
+        throw new BadRequestException('Session is not active');
+      }
+
+      if (Number(session.currentBalance) < amount) {
+        throw new BadRequestException('Insufficient session balance to open trade');
+      }
+
+      portfolioId = session.portfolioId;
+      fundingSessionId = session.id;
+      rollback = async () => {
+        await this.sessionsService.creditSession(session.id, amount);
+      };
+      await this.sessionsService.debitSession(session.id, amount);
+    } else {
+      const portfolio = await this.portfolioService.getPortfolioByUserId(userId);
+
+      if (Number(portfolio.balance) < amount) {
+        throw new BadRequestException('Insufficient balance to open trade');
+      }
+
+      portfolioId = portfolio.id;
+      rollback = async () => {
+        await this.portfolioService.updateBalance(portfolio.id, amount);
+      };
+      await this.portfolioService.updateBalance(portfolio.id, -amount);
     }
 
-    // Get current market price
     const currentPrice = await this.twelveDataService.getForexPrice(currencyPair);
 
-    // Create the trade
-    const savedTrade = await this.prisma.trade.create({
-      data: {
-        userId,
-        portfolioId: portfolio.id,
-        currencyPair,
-        tradeType,
-        amount,
-        entryPrice: currentPrice,
-        status: TradeStatus.OPEN,
-      },
-    });
+    try {
+      const savedTrade = await this.prisma.trade.create({
+        data: {
+          userId,
+          portfolioId,
+          sessionId: fundingSessionId,
+          currencyPair,
+          tradeType,
+          amount,
+          entryPrice: currentPrice,
+          status: TradeStatus.OPEN,
+        },
+      });
 
-    // Deduct the amount from portfolio balance
-    await this.portfolioService.updateBalance(portfolio.id, -amount);
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: { tradeCount: { increment: 1 } },
+      });
 
-    console.log(`Trade opened: ${tradeType} ${amount} ${currencyPair} @ ${currentPrice}`);
+      console.log(`Trade opened: ${tradeType} ${amount} ${currencyPair} @ ${currentPrice}`);
 
-    // Emit WebSocket notification
-    this.eventsGateway.emitTradeNotification(userId, {
-      type: 'TRADE_OPENED',
-      trade: savedTrade,
-    });
+      this.eventsGateway.emitTradeNotification(userId, {
+        type: 'TRADE_OPENED',
+        trade: savedTrade,
+      });
 
-    return savedTrade;
+      return savedTrade;
+    } catch (error) {
+      if (rollback) {
+        await rollback();
+      }
+      throw error;
+    }
   }
 
   /**
@@ -102,9 +138,19 @@ export class TradingService {
       },
     });
 
-    // Return initial amount + profit/loss to portfolio
-    const returnAmount = Number(trade.amount) + profitLoss;
-    await this.portfolioService.updateBalance(trade.portfolioId, returnAmount);
+    // Return initial amount + profit/loss to the funding wallet
+    let returnAmount = Number(trade.amount) + profitLoss;
+    if (returnAmount < 0) {
+      returnAmount = 0;
+    }
+
+    if (trade.sessionId) {
+      if (returnAmount > 0) {
+        await this.sessionsService.creditSession(trade.sessionId, returnAmount);
+      }
+    } else if (returnAmount !== 0) {
+      await this.portfolioService.updateBalance(trade.portfolioId, returnAmount);
+    }
 
     console.log(`Trade closed: ${trade.tradeType} ${trade.currencyPair} P/L: ${profitLoss}`);
 

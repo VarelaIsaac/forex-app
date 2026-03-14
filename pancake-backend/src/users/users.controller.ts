@@ -29,6 +29,7 @@ export class UsersController {
       email: user.email,
       nombre: user.nombre,
       isDemoAccount: user.isDemoAccount,
+      tradeCount: user.tradeCount,
       createdAt: user.createdAt,
     };
   }

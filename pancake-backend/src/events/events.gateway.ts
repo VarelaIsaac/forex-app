@@ -127,5 +127,12 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   emitTransactionNotification(userId: string, transactionData: any) {
     this.server.emit(`transaction_notification_${userId}`, transactionData);
   }
+
+  /**
+   * Emit session lifecycle/balance updates
+   */
+  emitSessionNotification(userId: string, sessionData: any) {
+    this.server.emit(`session_notification_${userId}`, sessionData);
+  }
 }
 
