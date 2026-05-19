@@ -52,6 +52,48 @@ export class TradingController {
   }
 
   /**
+   * Get available currency pairs (with optional search)
+   */
+  @Get('pairs')
+  @ApiOperation({
+    summary: 'List currency pairs',
+    description: 'Return available currency pairs, optionally filtered by query',
+  })
+  @ApiQuery({ name: 'q', required: false, description: 'Search query to filter pairs' })
+  async getPairs(@Query('q') q?: string) {
+    const all = [
+      { symbol: 'EUR/USD', note: 'Most traded, tight spreads' },
+      { symbol: 'GBP/USD', note: 'Fast moves, higher volatility' },
+      { symbol: 'USD/JPY', note: 'Good for trend spotting' },
+      { symbol: 'AUD/USD', note: 'Commodity-linked pair' },
+      { symbol: 'USD/CAD', note: 'Oil-sensitive pair' },
+      { symbol: 'NZD/USD', note: 'Lower liquidity, higher spreads' },
+      { symbol: 'EUR/GBP', note: 'Cross pair for EUR and GBP' },
+      { symbol: 'EUR/JPY', note: 'Popular cross with JPY' },
+      { symbol: 'USD/CHF', note: 'Safe-haven pair' },
+    ]
+
+    const query = q?.trim().toLowerCase()
+    const filtered = query
+      ? all.filter((p) => p.symbol.toLowerCase().includes(query) || p.note.toLowerCase().includes(query))
+      : all
+
+    // Try to get live quotes for the filtered pairs; fallback to notes if quotes fail
+    try {
+      const symbols = filtered.map((p) => p.symbol)
+      const quotes = await this.twelveDataService.getMultipleQuotes(symbols)
+      // Merge notes with quotes
+      return quotes.map((q) => {
+        const found = filtered.find((f) => f.symbol === q.symbol)
+        return { symbol: q.symbol, price: q.price, timestamp: q.timestamp, note: found?.note }
+      })
+    } catch (err) {
+      // If quotes fail, return the filtered list with no price
+      return filtered.map((p) => ({ symbol: p.symbol, note: p.note }))
+    }
+  }
+
+  /**
    * Open a new trade
    */
   @Post('open')

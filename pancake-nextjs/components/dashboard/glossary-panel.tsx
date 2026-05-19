@@ -6,35 +6,35 @@ import { BookOpen, ChevronDown, ChevronUp } from "lucide-react"
 const terms = [
   {
     term: "Pip",
-    def: "The smallest price move in a currency pair. For most pairs, 1 pip = 0.0001. Think of it like a cent for currency.",
+    def: "El movimiento más pequeño de precio en un par de divisas. En la mayoría de los pares, 1 pip = 0.0001. Piensa en ello como un céntimo de la divisa.",
   },
   {
-    term: "Lot",
-    def: "The unit of measurement for a trade. Standard = 100,000 units, Mini = 10,000, Micro = 1,000. Beginners usually trade micro lots.",
+    term: "Lote",
+    def: "La unidad de medida de una operación. Estándar = 100,000 unidades, mini = 10,000, micro = 1,000. Los principiantes suelen operar micro lotes.",
   },
   {
     term: "Spread",
-    def: "The difference between the buy (ask) and sell (bid) price. This is how brokers earn money — like the airport exchange rate margin.",
+    def: "La diferencia entre el precio de compra (ask) y el de venta (bid). Así ganan dinero los brókers, como el margen de un cambio de divisas en el aeropuerto.",
   },
   {
-    term: "Leverage",
-    def: "Borrowing from your broker to control a larger position. 1:100 means $100 controls $10,000. It amplifies both gains AND losses.",
+    term: "Apalancamiento",
+    def: "Pedir prestado al bróker para controlar una posición mayor. 1:100 significa que $100 controlan $10,000. Amplifica tanto las ganancias como las pérdidas.",
   },
   {
-    term: "Margin",
-    def: "The deposit needed to open a leveraged trade. If you use 1:100 leverage to trade $10,000, you only need $100 margin.",
+    term: "Margen",
+    def: "El depósito necesario para abrir una operación apalancada. Si usas 1:100 para operar $10,000, solo necesitas $100 de margen.",
   },
   {
     term: "Stop Loss",
-    def: "An automatic order to close your trade if the price moves against you by a set amount. Always use one to protect your account.",
+    def: "Una orden automática que cierra tu operación si el precio se mueve en tu contra una cantidad determinada. Úsala siempre para proteger tu cuenta.",
   },
   {
     term: "Take Profit",
-    def: "An automatic order to close your trade once it reaches your profit target. Locks in gains without watching the screen.",
+    def: "Una orden automática que cierra tu operación cuando alcanza tu objetivo de beneficio. Bloquea las ganancias sin estar pendiente de la pantalla.",
   },
   {
-    term: "Bull / Bear",
-    def: "Bull market = prices rising. Bear market = prices falling. Bulls charge upward, bears swipe downward — easy to remember.",
+    term: "Alcista / Bajista",
+    def: "Mercado alcista = los precios suben. Mercado bajista = los precios caen. Los alcistas empujan hacia arriba y los bajistas hacia abajo.",
   },
 ]
 
@@ -51,8 +51,8 @@ export function GlossaryPanel() {
           <BookOpen className="w-3.5 h-3.5 text-primary" />
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-foreground">Forex Glossary</h2>
-          <p className="text-xs text-muted-foreground">Tap a term to learn more</p>
+          <h2 className="text-sm font-semibold text-foreground">Glosario de Forex</h2>
+          <p className="text-xs text-muted-foreground">Pulsa un término para saber más</p>
         </div>
       </div>
 
@@ -64,7 +64,6 @@ export function GlossaryPanel() {
               <button
                 onClick={() => setExpanded(isOpen ? null : term)}
                 className="w-full flex items-center justify-between px-3 py-2.5 text-left hover:bg-accent/40 transition-colors"
-                aria-expanded={isOpen}
               >
                 <span className="text-xs font-medium text-foreground">{term}</span>
                 {isOpen
@@ -86,7 +85,7 @@ export function GlossaryPanel() {
         onClick={() => setShowAll(!showAll)}
         className="mt-3 w-full text-xs text-primary hover:text-primary/80 font-medium transition-colors py-1"
       >
-        {showAll ? "Show fewer terms" : `Show ${terms.length - 4} more terms`}
+        {showAll ? "Mostrar menos términos" : `Mostrar ${terms.length - 4} términos más`}
       </button>
     </div>
   )

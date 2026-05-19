@@ -38,10 +38,10 @@ const pairSeeds: Record<string, [number, number]> = {
 }
 
 const pairInfo: Record<string, { base: string; quote: string; desc: string; difficulty: string }> = {
-  "EUR/USD": { base: "EUR", quote: "USD", desc: "Euro vs US Dollar â€” the world's most traded pair.", difficulty: "Beginner friendly" },
-  "GBP/USD": { base: "GBP", quote: "USD", desc: "British Pound vs US Dollar, often called 'Cable'.", difficulty: "Beginner friendly" },
-  "USD/JPY": { base: "USD", quote: "JPY", desc: "US Dollar vs Japanese Yen â€” popular in Asian markets.", difficulty: "Intermediate" },
-  "AUD/USD": { base: "AUD", quote: "USD", desc: "Australian Dollar vs US Dollar, influenced by commodities.", difficulty: "Intermediate" },
+  "EUR/USD": { base: "EUR", quote: "USD", desc: "Euro frente al dólar estadounidense: el par más negociado del mundo.", difficulty: "Apto para principiantes" },
+  "GBP/USD": { base: "GBP", quote: "USD", desc: "Libra esterlina frente al dólar estadounidense, a menudo llamado Cable.", difficulty: "Apto para principiantes" },
+  "USD/JPY": { base: "USD", quote: "JPY", desc: "Dólar estadounidense frente al yen japonés: popular en los mercados asiáticos.", difficulty: "Intermedio" },
+  "AUD/USD": { base: "AUD", quote: "USD", desc: "Dólar australiano frente al dólar estadounidense, influido por las materias primas.", difficulty: "Intermedio" },
 }
 
 export function CurrencyChart({ showTutorialHighlight }: CurrencyChartProps) {
@@ -70,7 +70,7 @@ export function CurrencyChart({ showTutorialHighlight }: CurrencyChartProps) {
           ))}
         </div>
         <div className="h-56 flex items-center justify-center">
-          <span className="text-muted-foreground text-sm">Loading chart...</span>
+            <span className="text-muted-foreground text-sm">Cargando gráfico...</span>
         </div>
       </div>
     )
@@ -126,14 +126,14 @@ export function CurrencyChart({ showTutorialHighlight }: CurrencyChartProps) {
               <p className="text-xs text-muted-foreground leading-relaxed">{info.desc}</p>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button aria-label={`What is ${activePair}?`} className="text-muted-foreground/50 hover:text-primary transition-colors shrink-0">
+                  <button aria-label={`¿Qué es ${activePair}?`} className="text-muted-foreground/50 hover:text-primary transition-colors shrink-0">
                     <HelpCircle className="w-3.5 h-3.5" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="right" className="max-w-50">
                   <p className="text-xs">
-                    <span className="font-medium">{info.base}</span> is the base currency.
-                    The price shows how many <span className="font-medium">{info.quote}</span> you need to buy 1 {info.base}.
+                    <span className="font-medium">{info.base}</span> es la divisa base.
+                    El precio muestra cuántas unidades de <span className="font-medium">{info.quote}</span> necesitas para comprar 1 {info.base}.
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -177,10 +177,10 @@ export function CurrencyChart({ showTutorialHighlight }: CurrencyChartProps) {
                 </TooltipTrigger>
                 <TooltipContent side="bottom">
                   <p className="text-xs">
-                    {tf === "1H" && "Each point = 1 hour of price movement"}
-                    {tf === "4H" && "Each point = 4 hours of price movement"}
-                    {tf === "1D" && "Each point = 1 day of price movement"}
-                    {tf === "1W" && "Each point = 1 week of price movement"}
+                    {tf === "1H" && "Cada punto = 1 hora de movimiento del precio"}
+                    {tf === "4H" && "Cada punto = 4 horas de movimiento del precio"}
+                    {tf === "1D" && "Cada punto = 1 día de movimiento del precio"}
+                    {tf === "1W" && "Cada punto = 1 semana de movimiento del precio"}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -191,11 +191,11 @@ export function CurrencyChart({ showTutorialHighlight }: CurrencyChartProps) {
           <div className="hidden sm:flex items-center gap-4 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <span className="w-3 h-0.5 bg-profit rounded-full" />
-              Price going up
+              Precio subiendo
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-3 h-0.5 bg-loss rounded-full" />
-              Price going down
+              Precio bajando
             </span>
           </div>
         </div>
@@ -234,8 +234,8 @@ export function CurrencyChart({ showTutorialHighlight }: CurrencyChartProps) {
                   fontSize: "12px",
                   color: "#e2e8f0",
                 }}
-                formatter={(value: number) => [value.toFixed(activePair === "USD/JPY" ? 3 : 5), "Price"]}
-                labelFormatter={(l) => `Time: ${l}`}
+                formatter={(value: number) => [value.toFixed(activePair === "USD/JPY" ? 3 : 5), "Precio"]}
+                labelFormatter={(l) => `Hora: ${l}`}
               />
               <Area
                 type="monotone"
@@ -254,10 +254,10 @@ export function CurrencyChart({ showTutorialHighlight }: CurrencyChartProps) {
         <div className="flex items-start gap-3 bg-primary/5 border border-primary/15 rounded-lg px-4 py-3">
           <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" />
           <p className="text-xs text-foreground/80 leading-relaxed">
-            <span className="font-medium text-primary">Chart tip:</span> If the line goes{" "}
-            <span className="text-profit font-medium">up</span>, buyers are stronger than sellers.
-            If it goes <span className="text-loss font-medium">down</span>, sellers are winning.
-            Watch for patterns over time!
+            <span className="font-medium text-primary">Consejo del gráfico:</span> Si la línea va{" "}
+            <span className="text-profit font-medium">hacia arriba</span>, los compradores son más fuertes que los vendedores.
+            Si va <span className="text-loss font-medium">hacia abajo</span>, los vendedores están dominando.
+            Observa los patrones con el tiempo.
           </p>
         </div>
       </div>

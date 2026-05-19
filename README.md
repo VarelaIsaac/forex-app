@@ -75,14 +75,50 @@ forex-app/
 
 API documentation is available at: **http://localhost:3001/api**
 
-## ✅ Next.js vs Vite
 
-**Why Next.js?**
-- ✅ Built-in routing with file-based structure
-- ✅ Server-side rendering for better SEO
-- ✅ API routes for backend integration
-- ✅ Better production optimization
-- ✅ Image optimization out of the box
-- ✅ Native TypeScript support
 
-The design is identical to the Vite version but with Next.js benefits!
+
+frontend .env.local
+
+# Backend API Configuration
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_WS_URL=ws://localhost:3001
+
+# Application Configuration
+NEXT_PUBLIC_APP_NAME="Pancake"
+NEXT_PUBLIC_APP_ENV=development
+
+# Auth0 Configuration (v4 SDK)
+# Get these values from https://manage.auth0.com → Applications → Your App → Settings
+
+# A long random secret used to encrypt the session cookie
+# Generate one with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+APP_BASE_URL=http://localhost:3000
+AUTH0_DOMAIN=genai-4983036869979147.us.auth0.com
+AUTH0_CLIENT_ID=75SpBxZdfIOEsKvpOwZwKFSGVQ3Gwbfi
+AUTH0_CLIENT_SECRET=cAms_3oGMzhw-x_IA_q2FG5vJLU7a0NZrBHoNnY6kq4r_J1rtnEy2NZm8pCDk-cG
+AUTH0_AUDIENCE=https://genai-4983036869979147.us.auth0.com/api/v2/
+
+# 64 character random string to encrypt the session cookie
+#
+# We're generating a secret for your convenience, but for production,
+# generate your own secret using `openssl rand -hex 32`
+AUTH0_SECRET=caf30239d949bbd8ebf9a0fb6f20999f3a25348eb02a66d3977c23b95b41358d
+
+
+
+
+backend .env
+
+JWT_SECRET=9d97abc7f976477d76598349aac825b74662739c54b22d74b1ad07b45602bcb8
+JWT_EXPIRATION=7d
+EXCHANGERATE_API_KEY=402af2d747a0cb370f159942
+PORT=3001
+NODE_ENV=development
+
+# Auth0 Configuration
+AUTH0_DOMAIN=genai-4983036869979147.us.auth0.com
+AUTH0_AUDIENCE=https://genai-4983036869979147.us.auth0.com/api/v2/
+
+# Prisma Database URL
+DATABASE_URL="postgresql://postgres:user@localhost:5432/trading_app_db?schema=public"

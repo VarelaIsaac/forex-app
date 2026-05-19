@@ -7,35 +7,35 @@ import { cn } from "@/lib/utils"
 const steps = [
   {
     id: 0,
-    title: "Welcome to ForexPro",
-    subtitle: "Your safe space to learn forex trading",
-    description: "This is a practice environment with virtual money. Nothing here affects real funds — explore freely and make mistakes without worry.",
+    title: "Bienvenido a Pancake",
+    subtitle: "Tu espacio seguro para aprender trading de forex",
+    description: "Este es un entorno de práctica con dinero virtual. Nada de lo que hagas aquí afecta fondos reales. Explora con libertad y comete errores sin preocupación.",
     icon: Shield,
-    tip: "You start with $10,000 in virtual currency to practice with.",
+    tip: "Empiezas con $10,000 en moneda virtual para practicar.",
   },
   {
     id: 1,
-    title: "Understand Your Dashboard",
-    subtitle: "Track your progress at a glance",
-    description: "These cards show your account status. Hover over the ? icons to learn what each metric means.",
+    title: "Entiende tu panel",
+    subtitle: "Sigue tu progreso de un vistazo",
+    description: "Estas tarjetas muestran el estado de tu cuenta. Pasa el cursor sobre los iconos ? para aprender qué significa cada métrica.",
     icon: Lightbulb,
-    tip: "Your balance, profit/loss, and available margin are updated in real-time.",
+    tip: "Tu saldo, beneficio/pérdida y margen disponible se actualizan en tiempo real.",
   },
   {
     id: 2,
-    title: "Read Price Charts",
-    subtitle: "See how currency values change over time",
-    description: "Charts show price movement. Green = price going up, Red = price going down. Try switching between currency pairs to explore.",
+    title: "Lee los gráficos de precios",
+    subtitle: "Observa cómo cambian las divisas con el tiempo",
+    description: "Los gráficos muestran el movimiento del precio. Verde = precio subiendo, rojo = precio bajando. Prueba a cambiar entre pares de divisas para explorar.",
     icon: PlayCircle,
-    tip: "Start with EUR/USD — it's the most traded pair and easier to understand.",
+    tip: "Empieza con EUR/USD: es el par más negociado y más fácil de entender.",
   },
   {
     id: 3,
-    title: "Place Your First Trade",
-    subtitle: "Practice buying and selling currencies",
-    description: "Use the trade panel to practice. Start with small amounts (0.01 lots) and always set a stop-loss to limit potential losses.",
+    title: "Haz tu primera operación",
+    subtitle: "Practica comprando y vendiendo divisas",
+    description: "Usa el panel de operaciones para practicar. Empieza con cantidades pequeñas (0.01 lotes) y coloca siempre un stop loss para limitar posibles pérdidas.",
     icon: BookOpen,
-    tip: "BUY if you think the price will go UP. SELL if you think it will go DOWN.",
+    tip: "COMPRAR si crees que el precio subirá. VENDER si crees que bajará.",
   },
 ]
 
@@ -50,6 +50,8 @@ export function OnboardingFlow({ step, onStepChange, onComplete, onSkip }: Onboa
   const currentStep = steps[step]
   const isLastStep = step === steps.length - 1
   const Icon = currentStep.icon
+  const progressWidthClass =
+    step === 0 ? "w-1/4" : step === 1 ? "w-1/2" : step === 2 ? "w-3/4" : "w-full"
 
   const handleNext = () => {
     if (isLastStep) {
@@ -70,8 +72,7 @@ export function OnboardingFlow({ step, onStepChange, onComplete, onSkip }: Onboa
       {/* Progress bar */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-border">
         <div 
-          className="h-full bg-primary transition-all duration-500 ease-out"
-          style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+          className={cn("h-full bg-primary transition-all duration-500 ease-out", progressWidthClass)}
         />
       </div>
 
@@ -85,7 +86,7 @@ export function OnboardingFlow({ step, onStepChange, onComplete, onSkip }: Onboa
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                  Step {step + 1} of {steps.length}
+                  Paso {step + 1} de {steps.length}
                 </span>
               </div>
               <h2 className="text-lg font-semibold text-foreground">{currentStep.title}</h2>
@@ -95,7 +96,7 @@ export function OnboardingFlow({ step, onStepChange, onComplete, onSkip }: Onboa
           <button
             onClick={onSkip}
             className="text-muted-foreground hover:text-foreground transition-colors p-1"
-            aria-label="Skip onboarding"
+            aria-label="Saltar introducción"
           >
             <X className="w-5 h-5" />
           </button>
@@ -111,7 +112,7 @@ export function OnboardingFlow({ step, onStepChange, onComplete, onSkip }: Onboa
           <div className="mt-4 flex items-start gap-3 bg-warning/8 border border-warning/20 rounded-lg px-4 py-3 max-w-xl">
             <Lightbulb className="w-4 h-4 text-warning mt-0.5 shrink-0" />
             <p className="text-xs text-foreground/80 leading-relaxed">
-              <span className="font-medium text-warning">Pro tip:</span> {currentStep.tip}
+              <span className="font-medium text-warning">Consejo:</span> {currentStep.tip}
             </p>
           </div>
         </div>
@@ -131,7 +132,7 @@ export function OnboardingFlow({ step, onStepChange, onComplete, onSkip }: Onboa
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-accent"
                 )}
-                aria-label={`Go to step ${i + 1}`}
+                aria-label={`Ir al paso ${i + 1}`}
               >
                 {i < step ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
               </button>
@@ -149,7 +150,7 @@ export function OnboardingFlow({ step, onStepChange, onComplete, onSkip }: Onboa
                 onClick={handleBack}
                 className="text-muted-foreground"
               >
-                Back
+                Atrás
               </Button>
             )}
             <Button
@@ -157,7 +158,7 @@ export function OnboardingFlow({ step, onStepChange, onComplete, onSkip }: Onboa
               onClick={handleNext}
               className="gap-1.5"
             >
-              {isLastStep ? "Start Trading" : "Next"}
+              {isLastStep ? "Empezar a operar" : "Siguiente"}
               {isLastStep ? <CheckCircle2 className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
             </Button>
             {!isLastStep && (
@@ -167,7 +168,7 @@ export function OnboardingFlow({ step, onStepChange, onComplete, onSkip }: Onboa
                 onClick={onSkip}
                 className="text-muted-foreground text-xs"
               >
-                Skip tutorial
+                Saltar tutorial
               </Button>
             )}
           </div>

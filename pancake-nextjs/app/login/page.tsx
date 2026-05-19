@@ -29,7 +29,7 @@ export default function LoginPage() {
         <div className="text-center space-y-1">
           <h1 className="text-2xl font-bold tracking-tight">Pancake</h1>
           <p className="text-sm text-muted-foreground">
-            Forex trading — learn by doing
+            Trading de forex
           </p>
         </div>
 
@@ -38,11 +38,11 @@ export default function LoginPage() {
           href="/auth/login"
           className="flex w-full items-center justify-center rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow transition-opacity hover:opacity-90 active:opacity-75"
         >
-          Sign in with Auth0
+          Iniciar sesión con Auth0
         </a>
 
         <p className="text-center text-xs text-muted-foreground">
-          New here? Auth0 will let you create an account on the next screen.
+          ¿Es tu primera vez? Auth0 te permitirá crear una cuenta en la siguiente pantalla.
         </p>
       </div>
     </div>

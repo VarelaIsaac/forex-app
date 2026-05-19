@@ -5,12 +5,16 @@ import { useRouter } from "next/navigation"
 import { useUser } from "@auth0/nextjs-auth0/client"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
+import { useTranslate } from "@/hooks/use-translate"
 import { HelpPanel } from "@/components/dashboard/help-panel"
 
 const lessonCards = [
-  { title: "Forex basics", detail: "Understand how currency pairs move." },
-  { title: "Risk control", detail: "Learn how to protect your balance." },
-  { title: "Reading charts", detail: "Spot trends with simple visuals." },
+  { id: "forex-basics", title: "Fundamentos de Forex", description: "Entiende cómo se mueven los pares de divisas." },
+  { id: "risk-control", title: "Control de riesgo", description: "Aprende a proteger tu saldo." },
+  { id: "reading-charts", title: "Lectura de gráficos", description: "Detecta tendencias con visuales simples." },
+  { id: "candlestick-patterns", title: "Patrones de velas", description: "Reconoce señales de la acción del precio." },
+  { id: "support-resistance", title: "Soporte y resistencia", description: "Encuentra niveles de precio importantes." },
+  { id: "lot-sizes", title: "Tamaños de lote", description: "Controla el tamaño de tu posición." },
 ]
 
 export default function LearnPage() {
@@ -33,6 +37,8 @@ export default function LearnPage() {
     )
   }
 
+  const { t } = useTranslate()
+
   return (
     <div className="flex h-screen bg-background overflow-hidden font-sans">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -41,31 +47,26 @@ export default function LearnPage() {
         <Header
           onMenuClick={() => setSidebarOpen(true)}
           onHelpClick={() => setHelpOpen(true)}
-          title="Learn"
-          subtitle="Short lessons that keep trading beginner-friendly"
+          title={t("learn")}
+          subtitle={t("hint-learn")}
         />
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
+        <main className="flex-1 overflow-y-auto p-3 md:p-4 space-y-4">
           <section className="rounded-2xl bg-card border border-border p-5">
-            <h2 className="text-lg font-semibold text-foreground">Start your learning path</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Follow one short lesson at a time and practice after each one.
-            </p>
+            <h2 className="text-lg font-semibold text-foreground">{t("start-learning")}</h2>
+            <p className="text-sm text-muted-foreground mt-1">{t("learn-desc")}</p>
             <div className="grid gap-4 md:grid-cols-3 mt-5">
               {lessonCards.map((lesson) => (
-                <div key={lesson.title} className="rounded-xl border border-border bg-muted/40 p-4">
+                <button
+                  key={lesson.id}
+                  onClick={() => router.push(`/learn/${lesson.id}`)}
+                  className="rounded-xl border border-border bg-muted/40 p-4 hover:bg-muted/60 transition-colors cursor-pointer text-left"
+                >
                   <p className="text-xs text-muted-foreground">{lesson.title}</p>
-                  <p className="text-sm font-semibold text-foreground mt-1">{lesson.detail}</p>
-                </div>
+                  <p className="text-sm font-semibold text-foreground mt-1">{lesson.description}</p>
+                </button>
               ))}
             </div>
-          </section>
-
-          <section className="rounded-2xl bg-card border border-border p-5">
-            <h3 className="text-sm font-semibold text-foreground">Nielsen tip</h3>
-            <p className="text-xs text-muted-foreground mt-2">
-              Each lesson ends with a quick recap so you always know what to do next.
-            </p>
           </section>
         </main>
       </div>

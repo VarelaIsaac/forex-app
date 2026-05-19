@@ -2,40 +2,19 @@
 
 import { BookOpen, CheckCircle2, ChevronRight, Clock, PlayCircle, Trophy } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
+import { useTranslate } from "@/hooks/use-translate"
 
 const lessons = [
-  {
-    id: 1,
-    title: "Understanding Currency Pairs",
-    duration: "4 min",
-    completed: true,
-    type: "article",
-  },
-  {
-    id: 2,
-    title: "Reading Price Charts",
-    duration: "5 min",
-    completed: true,
-    type: "video",
-  },
-  {
-    id: 3,
-    title: "Your First Trade",
-    duration: "3 min",
-    completed: false,
-    current: true,
-    type: "interactive",
-  },
-  {
-    id: 4,
-    title: "Managing Risk",
-    duration: "6 min",
-    completed: false,
-    type: "article",
-  },
+  { slug: "forex-basics", duration: "4 min", completed: true },
+  { slug: "reading-charts", duration: "5 min", completed: true },
+  { slug: "your-first-trade", duration: "3 min", completed: false, current: true },
+  { slug: "risk-control", duration: "6 min", completed: false },
 ]
 
 export function LearningHub() {
+  const router = useRouter()
+  const { t } = useTranslate()
   const completedCount = lessons.filter((l) => l.completed).length
   const progress = Math.round((completedCount / lessons.length) * 100)
 
@@ -114,7 +93,7 @@ export function LearningHub() {
                     : "text-foreground/80"
                 )}
               >
-                {lesson.title}
+                {t(`lesson.${lesson.slug}.title`) || lesson.slug}
               </p>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
@@ -122,7 +101,7 @@ export function LearningHub() {
                   {lesson.duration}
                 </span>
                 {lesson.current && (
-                  <span className="text-[10px] font-medium text-primary">Continue</span>
+                  <span className="text-[10px] font-medium text-primary">{t("continue") || "Continue"}</span>
                 )}
               </div>
             </div>
@@ -133,9 +112,9 @@ export function LearningHub() {
       </div>
 
       {/* CTA */}
-      <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors">
+      <button onClick={() => router.push('/learn')} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors">
         <PlayCircle className="w-4 h-4" />
-        Continue Learning
+        {t("start-learning")}
       </button>
     </div>
   )

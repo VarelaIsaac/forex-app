@@ -2,42 +2,23 @@
 
 import { BookOpen, CheckCircle2, ChevronRight, Clock, PlayCircle, Trophy } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
+import { useTranslate } from "@/hooks/use-translate"
 
 const lessons = [
-  {
-    id: 1,
-    title: "Understanding Currency Pairs",
-    duration: "4 min",
-    completed: true,
-    type: "article",
-  },
-  {
-    id: 2,
-    title: "Reading Price Charts",
-    duration: "5 min",
-    completed: true,
-    type: "video",
-  },
-  {
-    id: 3,
-    title: "Your First Trade",
-    duration: "3 min",
-    completed: false,
-    current: true,
-    type: "interactive",
-  },
-  {
-    id: 4,
-    title: "Managing Risk",
-    duration: "6 min",
-    completed: false,
-    type: "article",
-  },
+  { slug: "forex-basics", title: "Fundamentos de Forex", duration: "4 min", completed: true },
+  { slug: "reading-charts", title: "Lectura de gráficos", duration: "5 min", completed: true },
+  { slug: "your-first-trade", title: "Tu primera operación", duration: "3 min", completed: false, current: true },
+  { slug: "risk-control", title: "Control de riesgo", duration: "6 min", completed: false },
 ]
 
 export function LearningHub() {
+  const router = useRouter()
+  const { t } = useTranslate()
   const completedCount = lessons.filter((l) => l.completed).length
   const progress = Math.round((completedCount / lessons.length) * 100)
+  const progressWidthClass =
+    progress === 25 ? "w-1/4" : progress === 50 ? "w-1/2" : progress === 75 ? "w-3/4" : "w-full"
 
   return (
     <div className="rounded-xl border border-border bg-card p-5 space-y-4">
@@ -46,9 +27,9 @@ export function LearningHub() {
         <div>
           <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-primary" />
-            Learning Path
+            Ruta de aprendizaje
           </h2>
-          <p className="text-xs text-muted-foreground mt-0.5">Master forex fundamentals</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Domina los fundamentos del forex</p>
         </div>
         <div className="flex items-center gap-1.5 bg-primary/10 rounded-full px-2.5 py-1">
           <Trophy className="w-3.5 h-3.5 text-primary" />
@@ -59,13 +40,12 @@ export function LearningHub() {
       {/* Progress bar */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">Progress</span>
-          <span className="text-foreground font-medium">{completedCount} of {lessons.length} completed</span>
+          <span className="text-muted-foreground">Progreso</span>
+          <span className="text-foreground font-medium">{completedCount} de {lessons.length} completadas</span>
         </div>
         <div className="h-2 bg-muted rounded-full overflow-hidden">
           <div
-            className="h-full bg-primary rounded-full transition-all duration-500"
-            style={{ width: `${progress}%` }}
+            className={cn("h-full bg-primary rounded-full transition-all duration-500", progressWidthClass)}
           />
         </div>
       </div>
@@ -74,7 +54,8 @@ export function LearningHub() {
       <div className="space-y-1.5">
         {lessons.map((lesson, index) => (
           <button
-            key={lesson.id}
+            key={lesson.slug}
+            onClick={() => { /* navigate to lesson if needed */ }}
             className={cn(
               "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all",
               lesson.current
@@ -122,7 +103,7 @@ export function LearningHub() {
                   {lesson.duration}
                 </span>
                 {lesson.current && (
-                  <span className="text-[10px] font-medium text-primary">Continue</span>
+                  <span className="text-[10px] font-medium text-primary">{t("continue") || "Continuar"}</span>
                 )}
               </div>
             </div>
@@ -133,9 +114,9 @@ export function LearningHub() {
       </div>
 
       {/* CTA */}
-      <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors">
+      <button onClick={() => router.push('/learn')} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors">
         <PlayCircle className="w-4 h-4" />
-        Continue Learning
+        {t("start-learning")}
       </button>
     </div>
   )

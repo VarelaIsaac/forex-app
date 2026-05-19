@@ -14,60 +14,24 @@ import {
   Zap
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useTranslate } from "@/hooks/use-translate"
 
 const categories = [
-  {
-    id: "getting-started",
-    label: "Getting Started",
-    icon: Zap,
-    articles: [
-      { title: "What is forex trading?", time: "3 min read" },
-      { title: "Understanding currency pairs", time: "4 min read" },
-      { title: "How to read a price chart", time: "5 min read" },
-      { title: "Your first practice trade", time: "3 min read" },
-    ],
-  },
-  {
-    id: "trading-basics",
-    label: "Trading Basics",
-    icon: TrendingUp,
-    articles: [
-      { title: "What are pips and lots?", time: "3 min read" },
-      { title: "Understanding leverage and margin", time: "5 min read" },
-      { title: "Setting stop-loss and take-profit", time: "4 min read" },
-      { title: "Market vs limit orders", time: "3 min read" },
-    ],
-  },
-  {
-    id: "strategies",
-    label: "Simple Strategies",
-    icon: Lightbulb,
-    articles: [
-      { title: "Trend following for beginners", time: "6 min read" },
-      { title: "Support and resistance basics", time: "5 min read" },
-      { title: "Risk management 101", time: "4 min read" },
-    ],
-  },
+  { id: "getting-started", labelKey: "getting-started", icon: Zap, articleKey: "help.article.getting-started" },
+  { id: "trading-basics", labelKey: "trading-basics", icon: TrendingUp, articleKey: "help.article.trading-basics" },
+  { id: "strategies", labelKey: "simple-strategies", icon: Lightbulb, articleKey: "help.article.strategies" },
 ]
 
-const faqs = [
-  {
-    q: "Is this real money?",
-    a: "No! You're in practice mode with $10,000 virtual money. Nothing you do here costs real money.",
-  },
-  {
-    q: "What does BUY and SELL mean?",
-    a: "BUY (going 'long') means you profit when the price goes UP. SELL (going 'short') means you profit when the price goes DOWN.",
-  },
-  {
-    q: "What's a safe lot size to start?",
-    a: "Start with 0.01 lots (micro lot). This minimizes your risk while you learn how trading works.",
-  },
-  {
-    q: "What is spread?",
-    a: "The spread is the difference between the buy and sell price. It's essentially the broker's fee for each trade.",
-  },
-]
+const faqs = [0, 1, 2, 3]
+
+function catArticleCount(t: (k: string) => string, baseKey: string) {
+  let count = 0
+  for (let i = 0; i < 8; i++) {
+    if (t(`${baseKey}.${i}.title`)) count++
+    else break
+  }
+  return count
+}
 
 interface HelpPanelProps {
   open: boolean
@@ -75,6 +39,7 @@ interface HelpPanelProps {
 }
 
 export function HelpPanel({ open, onClose }: HelpPanelProps) {
+  const { t } = useTranslate()
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
@@ -130,16 +95,16 @@ export function HelpPanel({ open, onClose }: HelpPanelProps) {
           {/* Quick FAQ */}
           <div className="px-5 py-4 border-b border-border">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              Frequently Asked
+              {t("faq-title")}
             </h3>
             <div className="space-y-2">
-              {faqs.map((faq, i) => (
+              {faqs.map((_, i) => (
                 <div key={i} className="rounded-lg border border-border overflow-hidden">
                   <button
                     onClick={() => setExpandedFaq(expandedFaq === i ? null : i)}
                     className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-accent/50 transition-colors"
                   >
-                    <span className="text-sm font-medium text-foreground">{faq.q}</span>
+                    <span className="text-sm font-medium text-foreground">{t(`faq.q.${i}`)}</span>
                     <ChevronRight
                       className={cn(
                         "w-4 h-4 text-muted-foreground transition-transform",
@@ -149,7 +114,7 @@ export function HelpPanel({ open, onClose }: HelpPanelProps) {
                   </button>
                   {expandedFaq === i && (
                     <div className="px-4 pb-3">
-                      <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{t(`faq.a.${i}`)}</p>
                     </div>
                   )}
                 </div>
@@ -160,7 +125,7 @@ export function HelpPanel({ open, onClose }: HelpPanelProps) {
           {/* Categories */}
           <div className="px-5 py-4">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              Learning Guides
+              {t("learning-guides")}
             </h3>
             <div className="space-y-2">
               {categories.map((cat) => {
@@ -177,8 +142,8 @@ export function HelpPanel({ open, onClose }: HelpPanelProps) {
                         <Icon className="w-4 h-4 text-primary" />
                       </div>
                       <div className="flex-1 text-left">
-                        <p className="text-sm font-medium text-foreground">{cat.label}</p>
-                        <p className="text-xs text-muted-foreground">{cat.articles.length} articles</p>
+                        <p className="text-sm font-medium text-foreground">{t(cat.labelKey)}</p>
+                        <p className="text-xs text-muted-foreground">{catArticleCount(t, cat.articleKey)} {t("articles-label")}</p>
                       </div>
                       <ChevronRight
                         className={cn(
@@ -189,17 +154,22 @@ export function HelpPanel({ open, onClose }: HelpPanelProps) {
                     </button>
                     {isExpanded && (
                       <div className="px-4 pb-3 space-y-1">
-                        {cat.articles.map((article, i) => (
-                          <button
-                            key={i}
-                            className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-left hover:bg-accent transition-colors group"
-                          >
-                            <span className="text-sm text-foreground group-hover:text-primary transition-colors">
-                              {article.title}
-                            </span>
-                            <span className="text-xs text-muted-foreground">{article.time}</span>
-                          </button>
-                        ))}
+                        {[0, 1, 2, 3].map((i) => {
+                          const title = t(`${cat.articleKey}.${i}.title`)
+                          const time = t(`${cat.articleKey}.${i}.time`)
+                          if (!title) return null
+                          return (
+                            <button
+                              key={i}
+                              className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-left hover:bg-accent transition-colors group"
+                            >
+                              <span className="text-sm text-foreground group-hover:text-primary transition-colors">
+                                {title}
+                              </span>
+                              <span className="text-xs text-muted-foreground">{time}</span>
+                            </button>
+                          )
+                        })}
                       </div>
                     )}
                   </div>
@@ -209,17 +179,7 @@ export function HelpPanel({ open, onClose }: HelpPanelProps) {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="px-5 py-4 border-t border-border space-y-3">
-          <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
-            <MessageCircle className="w-4 h-4" />
-            Chat with Support
-          </button>
-          <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
-            <ExternalLink className="w-4 h-4" />
-            View Full Documentation
-          </button>
-        </div>
+        {/* Footer removed as requested */}
       </aside>
     </>
   )

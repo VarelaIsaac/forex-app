@@ -43,7 +43,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <Zap className="w-4.5 h-4.5 text-primary-foreground" />
               </div>
-              <span className="font-bold text-sidebar-foreground tracking-tight text-lg">ForexPro</span>
+              <span className="font-bold text-sidebar-foreground tracking-tight text-lg">Pancake</span>
             </div>
             <button
               onClick={onClose}

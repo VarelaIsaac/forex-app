@@ -6,6 +6,7 @@ import { useUser } from "@auth0/nextjs-auth0/client"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { HelpPanel } from "@/components/dashboard/help-panel"
+import { QuickTrade } from "@/components/dashboard/quick-trade"
 import { Badge } from "@/components/ui/badge"
 
 export default function TradePage() {
@@ -36,41 +37,19 @@ export default function TradePage() {
         <Header
           onMenuClick={() => setSidebarOpen(true)}
           onHelpClick={() => setHelpOpen(true)}
-          title="Trade"
-          subtitle="Place a trade with clear, step-by-step guidance"
+          title="Operar"
+          subtitle="Realiza una operación con una guía clara paso a paso"
         />
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
-          <section className="rounded-2xl bg-card border border-border p-5">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">Start with a practice trade</h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Pick a currency pair, choose BUY or SELL, and start small to learn the flow.
-                </p>
-              </div>
-              <Badge className="bg-primary/15 text-primary border-0">Guided</Badge>
-            </div>
-            <div className="grid gap-4 md:grid-cols-3 mt-5">
-              {[
-                { label: "Step 1", value: "Choose a pair" },
-                { label: "Step 2", value: "Set trade size" },
-                { label: "Step 3", value: "Confirm trade" },
-              ].map((item) => (
-                <div key={item.label} className="rounded-xl border border-border bg-muted/40 p-4">
-                  <p className="text-xs text-muted-foreground">{item.label}</p>
-                  <p className="text-sm font-semibold text-foreground mt-1">{item.value}</p>
-                </div>
-              ))}
-            </div>
-          </section>
+        <main className="flex-1 overflow-y-auto p-3 md:p-4 space-y-4">
+          <QuickTrade />
 
           <section className="rounded-2xl bg-card border border-border p-5">
-            <h3 className="text-sm font-semibold text-foreground">Beginner tips</h3>
+            <h3 className="text-sm font-semibold text-foreground">Consejos para principiantes</h3>
             <ul className="text-xs text-muted-foreground mt-3 space-y-2">
-              <li>Start with one pair you recognize, like EUR/USD.</li>
-              <li>Use smaller amounts while you learn.</li>
-              <li>Review the explanation panel before you confirm.</li>
+              <li>Empieza con un par que reconozcas, como EUR/USD.</li>
+              <li>Usa cantidades pequeñas mientras aprendes.</li>
+              <li>Revisa el panel de explicación antes de confirmar.</li>
             </ul>
           </section>
         </main>

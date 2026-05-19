@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 const steps = [
   {
     id: 0,
-    title: "Welcome to ForexPro",
+    title: "Welcome to Pancake",
     subtitle: "Your safe space to learn forex trading",
     description: "This is a practice environment with virtual money. Nothing here affects real funds — explore freely and make mistakes without worry.",
     icon: Shield,

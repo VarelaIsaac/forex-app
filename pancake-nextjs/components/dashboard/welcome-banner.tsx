@@ -4,9 +4,9 @@ import { BookOpen, ChevronRight, GraduationCap, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const steps = [
-  { label: "Set up your account", done: true },
-  { label: "Complete your first trade", done: false },
-  { label: "Explore market analysis", done: false },
+  { label: "Configura tu cuenta", done: true },
+  { label: "Completa tu primera operación", done: false },
+  { label: "Explora el análisis de mercado", done: false },
 ]
 
 interface WelcomeBannerProps {
@@ -16,6 +16,7 @@ interface WelcomeBannerProps {
 export function WelcomeBanner({ onDismiss }: WelcomeBannerProps) {
   const completed = steps.filter((s) => s.done).length
   const pct = Math.round((completed / steps.length) * 100)
+  const progressWidthClass = pct === 33 ? "w-1/3" : pct === 67 ? "w-2/3" : "w-full"
 
   return (
     <div className="relative rounded-xl border border-primary/25 bg-primary/8 overflow-hidden">
@@ -26,7 +27,7 @@ export function WelcomeBanner({ onDismiss }: WelcomeBannerProps) {
         <button
           onClick={onDismiss}
           className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Dismiss welcome banner"
+          aria-label="Cerrar banner de bienvenida"
         >
           <X className="w-4 h-4" />
         </button>
@@ -39,23 +40,21 @@ export function WelcomeBanner({ onDismiss }: WelcomeBannerProps) {
             </div>
             <div>
               <h2 className="text-sm font-semibold text-foreground">
-                Welcome to Pancake — you{"'"}re in practice mode
+                Bienvenido a Pancake: estás en modo práctica
               </h2>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed max-w-lg">
-                You{"'"}re trading with <span className="text-warning font-medium">$10,000 virtual money</span>. Nothing
-                you do here costs real money — explore freely and learn at your own pace.
+                Estás operando con <span className="text-warning font-medium">$10,000 de dinero virtual</span>. Nada de lo que hagas aquí cuesta dinero real. Explora con libertad y aprende a tu ritmo.
               </p>
 
               {/* Progress */}
               <div className="mt-3 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Getting started</span>
-                  <span className="text-foreground font-medium">{completed}/{steps.length} done</span>
+                  <span className="text-muted-foreground">Comenzando</span>
+                  <span className="text-foreground font-medium">{completed}/{steps.length} completadas</span>
                 </div>
                 <div className="h-1.5 bg-border rounded-full overflow-hidden w-48">
                   <div
-                    className="h-full bg-primary rounded-full transition-all duration-500"
-                    style={{ width: `${pct}%` }}
+                    className={cn("h-full bg-primary rounded-full transition-all duration-500", progressWidthClass)}
                   />
                 </div>
               </div>
@@ -89,10 +88,10 @@ export function WelcomeBanner({ onDismiss }: WelcomeBannerProps) {
           <div className="flex sm:flex-col gap-2 shrink-0">
             <Button size="sm" className="text-xs gap-1.5">
               <BookOpen className="w-3.5 h-3.5" />
-              Start Learning
+              Empezar a aprender
             </Button>
             <Button size="sm" variant="outline" className="text-xs gap-1.5 border-border">
-              Watch Tutorial
+              Ver tutorial
               <ChevronRight className="w-3.5 h-3.5" />
             </Button>
           </div>

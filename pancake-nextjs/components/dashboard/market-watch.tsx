@@ -5,10 +5,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/utils"
 
 const pairs = [
-  { pair: "EUR/USD", bid: 1.08390, ask: 1.08412, change: +0.32, label: "Euro / Dollar", hint: "Most traded pair — great for beginners" },
-  { pair: "GBP/USD", bid: 1.26340, ask: 1.26368, change: -0.18, label: "Pound / Dollar", hint: "Also called 'Cable' — popular and liquid" },
-  { pair: "USD/JPY", bid: 149.820, ask: 149.847, change: +0.11, label: "Dollar / Yen", hint: "Active during Asian market hours" },
-  { pair: "AUD/USD", bid: 0.65180, ask: 0.65202, change: -0.42, label: "Aussie / Dollar", hint: "Influenced by commodity prices" },
+  { pair: "EUR/USD", bid: 1.08390, ask: 1.08412, change: +0.32, label: "Euro / Dólar", hint: "Par más negociado, ideal para principiantes" },
+  { pair: "GBP/USD", bid: 1.26340, ask: 1.26368, change: -0.18, label: "Libra / Dólar", hint: "También llamado Cable, es popular y muy líquido" },
+  { pair: "USD/JPY", bid: 149.820, ask: 149.847, change: +0.11, label: "Dólar / Yen", hint: "Activo durante el horario asiático" },
+  { pair: "AUD/USD", bid: 0.65180, ask: 0.65202, change: -0.42, label: "Australiana / Dólar", hint: "Influido por los precios de las materias primas" },
 ]
 
 export function MarketWatch() {
@@ -19,18 +19,18 @@ export function MarketWatch() {
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-primary" />
             <div>
-              <h2 className="text-sm font-semibold text-foreground">Market Watch</h2>
-              <p className="text-xs text-muted-foreground">Live prices</p>
+              <h2 className="text-sm font-semibold text-foreground">Seguimiento del mercado</h2>
+              <p className="text-xs text-muted-foreground">Precios en vivo</p>
             </div>
           </div>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button aria-label="What is Market Watch?" className="text-muted-foreground/50 hover:text-primary transition-colors">
+              <button aria-label="¿Qué es el seguimiento del mercado?" className="text-muted-foreground/50 hover:text-primary transition-colors">
                 <HelpCircle className="w-4 h-4" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="left" className="max-w-[200px]">
-              <p className="text-xs">Live prices for popular currency pairs. Click any pair to trade it.</p>
+              <p className="text-xs">Precios en vivo de pares de divisas populares. Haz clic en cualquier par para operarlo.</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -52,7 +52,7 @@ export function MarketWatch() {
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <p className="text-sm font-medium tabular-nums text-foreground">{ask.toFixed(decimals)}</p>
-                        <p className="text-[10px] text-muted-foreground">{spread}p spread</p>
+                        <p className="text-[10px] text-muted-foreground">{spread} pips de spread</p>
                       </div>
                       <span
                         className={cn(
@@ -68,7 +68,7 @@ export function MarketWatch() {
                 </TooltipTrigger>
                 <TooltipContent side="left">
                   <p className="text-xs font-medium">{hint}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Click to trade this pair</p>
+                  <p className="text-xs text-muted-foreground mt-1">Haz clic para operar este par</p>
                 </TooltipContent>
               </Tooltip>
             )
@@ -76,7 +76,7 @@ export function MarketWatch() {
         </div>
 
         <p className="text-[10px] text-muted-foreground text-center mt-3">
-          Prices update in real-time during market hours
+          Los precios se actualizan en tiempo real durante el horario del mercado
         </p>
       </div>
     </TooltipProvider>

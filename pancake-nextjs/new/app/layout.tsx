@@ -7,7 +7,7 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'ForexPro — Trading Dashboard',
+  title: 'Pancake — Trading Dashboard',
   description: 'Learn and practice forex trading with a beginner-friendly dashboard.',
   generator: 'me',
   icons: {

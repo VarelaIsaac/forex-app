@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { Auth0Provider } from '@auth0/nextjs-auth0/client'
+import { Providers } from './providers'
+import { LocationPermissionPrompt } from '@/components/location-permission-prompt'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'ForexPro — Trading Dashboard',
-  description: 'Learn and practice forex trading with a beginner-friendly dashboard.',
+  title: 'Pancake',
+  description: 'Aprende y practica trading de forex con un panel pensado para principiantes.',
   generator: 'me',
   icons: {
     icon: [
@@ -36,12 +37,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="es" suppressHydrationWarning>
       <body className="font-sans antialiased">
-        <Auth0Provider>
+        <Providers>
           {children}
+          <LocationPermissionPrompt />
           <Analytics />
-        </Auth0Provider>
+        </Providers>
       </body>
     </html>
   )

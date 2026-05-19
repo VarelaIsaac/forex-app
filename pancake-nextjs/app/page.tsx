@@ -49,7 +49,7 @@ export default function DashboardPage() {
           onHelpClick={() => setHelpOpen(true)}
         />
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5">
+        <main className="flex-1 overflow-y-auto p-3 md:p-4 space-y-4">
           {showOnboarding && (
             <OnboardingFlow
               step={onboardingStep}
