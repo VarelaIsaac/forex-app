@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { SpotlightOverlay } from "./spotlight-overlay"
 import { useTranslate } from "@/hooks/use-translate"
@@ -33,6 +33,19 @@ export function TutorialGuide({
   const step = steps[currentStep]
   const isFirst = currentStep === 0
   const isLast = currentStep === steps.length - 1
+
+  // scroll the target element into view when step changes
+  useEffect(() => {
+    if (!step || !step.elementSelector) return
+    try {
+      const el = document.querySelector(step.elementSelector)
+      if (el && typeof (el as HTMLElement).scrollIntoView === "function") {
+        ;(el as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" })
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [currentStep, step])
 
   const handleNext = () => {
     if (isLast) {
@@ -74,8 +87,8 @@ export function TutorialGuide({
             <h3 className="font-semibold text-foreground mb-2">{step.title}</h3>
             <p className="text-sm text-muted-foreground">{step.description}</p>
             {step.action && (
-              <div className="mt-3 text-xs font-medium text-primary bg-primary/10 px-3 py-2 rounded border border-primary/20 flex items-start gap-2">
-                <span className="mt-0.5">💡</span>
+              <div className="mt-3 text-xs font-semibold text-primary bg-primary/10 px-3 py-2 rounded border border-primary/20 flex items-start gap-2">
+                <span className="mt-0.5">👉</span>
                 <span>{step.action}</span>
               </div>
             )}

@@ -7,6 +7,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useToast } from "@/hooks/use-notifications"
 import { useTrades } from "@/contexts/trades-context"
 import { cn } from "@/lib/utils"
+import { useEffect } from "react"
+import { useMarket } from "@/hooks/use-market"
 
 interface QuickTradeProps {
   showTutorialHighlight?: boolean
@@ -43,11 +45,21 @@ export function QuickTrade({ showTutorialHighlight }: QuickTradeProps) {
   const [pendingDirection, setPendingDirection] = useState<"buy" | "sell" | null>(null)
   const [confirming, setConfirming] = useState(false)
 
-  const bid = 1.08390
-  const ask = 1.08412
-  const spread = ((ask - bid) * 10000).toFixed(1)
-  
-  const selectedPair = pairs.find(p => p.code === pairCode) || pairs[0]
+  // Simple local price map for demo / practice mode. In future this should come from live market data.
+  const selectedPair = pairs.find((p) => p.code === pairCode) || pairs[0]
+
+  const { quotes, subscribe, unsubscribe, get } = useMarket()
+
+  // Subscribe to the currently selected pair so backend sends updates
+  useEffect(() => {
+    subscribe([pairCode])
+    return () => unsubscribe([pairCode])
+  }, [pairCode, subscribe, unsubscribe])
+
+  const q = get(pairCode) || { symbol: pairCode, bid: 1.0, ask: 1.0 }
+  const { bid, ask } = q
+  const decimals = pairCode.includes("JPY") ? 3 : 5
+  const spread = ((ask - bid) * (pairCode.includes("JPY") ? 100 : 10000)).toFixed(1)
 
   function handleTradeClick(direction: "buy" | "sell") {
     setPendingDirection(direction)

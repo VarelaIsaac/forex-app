@@ -12,6 +12,7 @@ import { TradingModule } from './trading/trading.module';
 import { PortfolioModule } from './portfolio/portfolio.module';
 import { EventsModule } from './events/events.module';
 import { EducationModule } from './education/education.module';
+import { LearningModule } from './learning/learning.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SessionsModule } from './sessions/sessions.module';
 
@@ -34,6 +35,7 @@ import { SessionsModule } from './sessions/sessions.module';
     PortfolioModule, 
     EventsModule,
     EducationModule,
+    LearningModule,
     SessionsModule,
   ],
   controllers: [AppController],

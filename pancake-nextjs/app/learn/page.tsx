@@ -23,6 +23,8 @@ export default function LearnPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
 
+  const { t } = useTranslate()
+
   useEffect(() => {
     if (!isLoading && !user) {
       router.replace("/login")
@@ -36,8 +38,6 @@ export default function LearnPage() {
       </div>
     )
   }
-
-  const { t } = useTranslate()
 
   return (
     <div className="flex h-screen bg-background overflow-hidden font-sans">

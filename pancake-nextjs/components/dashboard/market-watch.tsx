@@ -3,6 +3,8 @@
 import { ArrowDownRight, ArrowUpRight, HelpCircle, TrendingUp } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import { useEffect } from "react"
+import { useMarket } from "@/hooks/use-market"
 
 const pairs = [
   { pair: "EUR/USD", bid: 1.08390, ask: 1.08412, change: +0.32, label: "Euro / Dólar", hint: "Par más negociado, ideal para principiantes" },
@@ -12,6 +14,14 @@ const pairs = [
 ]
 
 export function MarketWatch() {
+  const { subscribe, unsubscribe, get } = useMarket()
+
+  useEffect(() => {
+    // subscribe to all pairs shown in this widget
+    subscribe(pairs.map((p) => p.pair))
+    return () => unsubscribe(pairs.map((p) => p.pair))
+  }, [subscribe, unsubscribe])
+
   return (
     <TooltipProvider>
       <div className="rounded-xl border border-border bg-card p-5">
@@ -36,11 +46,14 @@ export function MarketWatch() {
         </div>
 
         <div className="space-y-1.5">
-          {pairs.map(({ pair, bid, ask, change, label, hint }) => {
+          {pairs.map(({ pair, bid: _bid, ask: _ask, change, label, hint }) => {
+            const q = get(pair) || { symbol: pair, bid: _bid, ask: _ask }
+            const bid = q.bid
+            const ask = q.ask
             const isUp = change >= 0
             const decimals = pair.includes("JPY") ? 3 : 5
             const spread = ((ask - bid) * (pair.includes("JPY") ? 100 : 10000)).toFixed(1)
-            
+
             return (
               <Tooltip key={pair}>
                 <TooltipTrigger asChild>

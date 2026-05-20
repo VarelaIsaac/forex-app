@@ -8,6 +8,7 @@ import { Header } from "@/components/dashboard/header"
 import { HelpPanel } from "@/components/dashboard/help-panel"
 import { TutorialGuide, type TutorialStep } from "@/components/tutorial/tutorial-guide"
 import { useTranslate } from "@/hooks/use-translate"
+import { useLearning } from "@/hooks/use-learning"
 
 const lessonContent: Record<
   string,
@@ -233,6 +234,7 @@ export default function LessonPage() {
 
   const lesson = lessonContent[lessonId]
   const { t } = useTranslate()
+  const { saveProgress } = useLearning()
 
   const translatedLesson = lesson
     ? {
@@ -331,7 +333,33 @@ export default function LessonPage() {
                 {t("back-to-lessons")}
               </button>
               <button
-                onClick={() => setShowTutorial(true)}
+                onClick={async () => {
+                  // mark lesson as in-progress (10%) then store tutorial payload so dashboard can run the guided flow
+                  try {
+                    await saveProgress(lessonId, 10, false)
+                  } catch (e) {
+                    // ignore failures (best-effort)
+                  }
+
+                  try {
+                    const payload = {
+                      lessonId,
+                      title: translatedLesson?.title ?? lesson.title,
+                      description: translatedLesson?.description ?? lesson.description,
+                      steps: translatedLesson?.steps ?? lesson.steps,
+                    }
+                    sessionStorage.setItem("guidedTutorial", JSON.stringify(payload))
+                  } catch (e) {
+                    // ignore
+                  }
+
+                  // use full navigation to ensure cross-page start
+                  if (typeof window !== "undefined") {
+                    window.location.assign("/")
+                  } else {
+                    router.push("/")
+                  }
+                }}
                 className="px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg transition-colors font-medium"
               >
                 {t("start-guided-tutorial")}
@@ -348,8 +376,13 @@ export default function LessonPage() {
           title={translatedLesson?.title ?? lesson.title}
           description={translatedLesson?.description ?? lesson.description}
           steps={translatedLesson?.steps ?? lesson.steps}
-          onComplete={() => {
+          onComplete={async () => {
             setShowTutorial(false)
+            try {
+              await saveProgress(lessonId, 100, true)
+            } catch (e) {
+              // ignore
+            }
             router.push("/learn")
           }}
           onBack={() => setShowTutorial(false)}
