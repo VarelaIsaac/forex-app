@@ -26,10 +26,10 @@ jobs:
       NODE_ENV: test
       DATABASE_URL: postgresql://postgres:user@localhost:5432/trading_app_db?schema=public
       PORT: 3001
-      JWT_SECRET: test-jwt-secret
+      JWT_SECRET: 9d97abc7f976477d76598349aac825b74662739c54b22d74b1ad07b45602bcb8
       CORS_ORIGIN: http://localhost:3000
-      AUTH0_DOMAIN: example.us.auth0.com
-      AUTH0_AUDIENCE: https://example.us.auth0.com/api/v2/
+      AUTH0_DOMAIN: genai-4983036869979147.us.auth0.com
+      AUTH0_AUDIENCE: https://genai-4983036869979147.us.auth0.com/api/v2/
     defaults:
       run:
         working-directory: pancake-backend
@@ -73,11 +73,11 @@ jobs:
       NEXT_PUBLIC_APP_NAME: Pancake
       NEXT_PUBLIC_APP_ENV: test
       APP_BASE_URL: http://localhost:3000
-      AUTH0_DOMAIN: example.us.auth0.com
-      AUTH0_CLIENT_ID: test-client-id
-      AUTH0_CLIENT_SECRET: test-client-secret
-      AUTH0_SECRET: test-auth0-secret
-      AUTH0_AUDIENCE: https://example.us.auth0.com/api/v2/
+      AUTH0_DOMAIN: https://genai-4983036869979147.us.auth0.com/api/v2/
+      AUTH0_CLIENT_ID: 75SpBxZdfIOEsKvpOwZwKFSGVQ3Gwbfi
+      AUTH0_CLIENT_SECRET: cAms_3oGMzhw-x_IA_q2FG5vJLU7a0NZrBHoNnY6kq4r_J1rtnEy2NZm8pCDk-cG
+      AUTH0_SECRET: caf30239d949bbd8ebf9a0fb6f20999f3a25348eb02a66d3977c23b95b41358d
+      AUTH0_AUDIENCE: https://genai-4983036869979147.us.auth0.com/api/v2/
     defaults:
       run:
         working-directory: pancake-nextjs
