@@ -6,6 +6,20 @@ import { UsersService } from '../users/users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TransactionType } from '@prisma/client';
 
+type AuthenticatedRequest = {
+  user: {
+    userId: string;
+    email: string;
+    nombre?: string;
+  };
+};
+
+type CapturedOrder = {
+  status: string;
+  amount: number;
+  orderId: string;
+};
+
 @ApiTags('Portfolio')
 @ApiBearerAuth('JWT-auth')
 @Controller('portfolio')
@@ -18,12 +32,12 @@ export class PortfolioController {
   ) {}
 
   @Get()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get user portfolio',
     description: 'Retrieve portfolio balance and details for authenticated user',
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Portfolio retrieved successfully',
     schema: {
       example: {
@@ -35,17 +49,17 @@ export class PortfolioController {
       },
     },
   })
-  async getMyPortfolio(@Request() req) {
+  async getMyPortfolio(@Request() req: AuthenticatedRequest) {
     return await this.portfolioService.getPortfolioByUserId(req.user.userId);
   }
 
   @Get('transactions')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get transaction history',
     description: 'Retrieve all deposit and withdrawal transactions',
   })
   @ApiResponse({ status: 200, description: 'Transaction history retrieved successfully' })
-  async getTransactions(@Request() req) {
+  async getTransactions(@Request() req: AuthenticatedRequest) {
     const portfolio = await this.portfolioService.getPortfolioByUserId(req.user.userId);
     return await this.portfolioService.getTransactionHistory(portfolio.id);
   }
@@ -54,12 +68,15 @@ export class PortfolioController {
    * Create a PayPal order for deposit
    */
   @Post('deposit/create-order')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create PayPal deposit order',
     description: 'Initiate a deposit transaction via PayPal (uses demo mode if PayPal not configured)',
   })
   @ApiResponse({ status: 201, description: 'Deposit order created successfully' })
-  async createDepositOrder(@Request() req, @Body() body: { amount: number }) {
+  async createDepositOrder(
+    @Request() req: AuthenticatedRequest,
+    @Body() body: { amount: number },
+  ) {
     if (!this.paypalService.isConfigured()) {
       // For demo: directly add funds without PayPal
       const portfolio = await this.portfolioService.getPortfolioByUserId(req.user.userId);
@@ -86,13 +103,18 @@ export class PortfolioController {
    * Capture/complete a PayPal deposit
    */
   @Post('deposit/capture-order')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Capture PayPal deposit',
     description: 'Complete a PayPal deposit transaction and update portfolio balance',
   })
   @ApiResponse({ status: 200, description: 'Deposit captured successfully' })
-  async captureDepositOrder(@Request() req, @Body() body: { orderId: string }) {
-    const captureData = await this.paypalService.captureOrder(body.orderId);
+  async captureDepositOrder(
+    @Request() req: AuthenticatedRequest,
+    @Body() body: { orderId: string },
+  ) {
+    const captureData = (await this.paypalService.captureOrder(
+      body.orderId,
+    )) as CapturedOrder;
     
     if (captureData.status === 'COMPLETED') {
       const portfolio = await this.portfolioService.getPortfolioByUserId(req.user.userId);
@@ -123,12 +145,15 @@ export class PortfolioController {
    * Quick deposit without PayPal (for demo/testing)
    */
   @Post('deposit')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Quick deposit (demo mode)',
     description: 'Add funds directly to portfolio without PayPal integration',
   })
   @ApiResponse({ status: 201, description: 'Deposit completed successfully' })
-  async deposit(@Request() req, @Body() body: { amount: number }) {
+  async deposit(
+    @Request() req: AuthenticatedRequest,
+    @Body() body: { amount: number },
+  ) {
     const portfolio = await this.portfolioService.getPortfolioByUserId(req.user.userId);
     const transaction = await this.portfolioService.createTransaction(
       req.user.userId,
@@ -138,12 +163,12 @@ export class PortfolioController {
     );
     return await this.portfolioService.completeTransaction(transaction.id);
   }
-@ApiOperation({ 
+  @ApiOperation({
     summary: 'Reset demo portfolio',
     description: 'Reset demo account balance to $10,000 and close all open trades (demo accounts only)',
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Demo portfolio reset successfully',
   })
   @ApiResponse({ status: 400, description: 'Only available for demo accounts' })
@@ -152,7 +177,7 @@ export class PortfolioController {
    * Reset demo portfolio to initial balance (demo accounts only)
    */
   @Post('reset-demo')
-  async resetDemoPortfolio(@Request() req) {
+  async resetDemoPortfolio(@Request() req: AuthenticatedRequest) {
     const user = await this.usersService.findUserById(req.user.userId);
     
     if (!user) {

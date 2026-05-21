@@ -60,5 +60,5 @@ async function bootstrap() {
   console.log(`\n🚀 Pancake Forex Trading API is running on: http://localhost:${port}`);
   console.log(`📚 API Documentation available at: http://localhost:${port}/api\n`);
 }
-bootstrap();
+void bootstrap();
 

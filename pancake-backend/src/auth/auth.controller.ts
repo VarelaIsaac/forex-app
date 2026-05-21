@@ -1,20 +1,34 @@
-import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Request,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { Request as ExpressRequest } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto, SignupDto } from './dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signup')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Register a new user',
     description: 'Create a new user account with email and password. Optionally set as demo account for practice trading.',
   })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'User successfully registered. Returns JWT token and user info.',
     schema: {
       example: {
@@ -39,12 +53,12 @@ export class AuthController {
   }
 
   @Post('login')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Login with existing account',
     description: 'Authenticate with email and password. Returns JWT token for subsequent requests.',
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Login successful. Returns JWT token and user info.',
   })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
@@ -63,8 +77,14 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @Get('me')
-  async getCurrentUser(@Request() req) {
+  async getCurrentUser(
+    @Request()
+    req: ExpressRequest & {
+      user: { userId: string; email: string; nombre?: string };
+    },
+  ) {
     return req.user;
   }
 }
