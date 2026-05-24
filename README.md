@@ -65,7 +65,7 @@ Deploy the apps separately:
 Set these in the Vercel project for `pancake-nextjs`:
 
 - `NEXT_PUBLIC_API_URL=https://your-backend-domain`
-- `NEXT_PUBLIC_WS_URL=wss://your-backend-domain`
+- `NEXT_PUBLIC_WS_URL=wss://your-backend-domain` 
 - `APP_BASE_URL=https://your-vercel-project.vercel.app`
 - `AUTH0_DOMAIN=genai-4983036869979147.us.auth0.com`
 - `AUTH0_CLIENT_ID=75SpBxZdfIOEsKvpOwZwKFSGVQ3Gwbfi` 
