@@ -1,0 +1,73 @@
+.panel {
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  min-height: 150px;
+}
+
+.metaColumn {
+  width: 54%;
+}
+
+.smallLabel {
+  font-size: 10px;
+}
+
+.shell108 {
+  height: 108px;
+}
+
+.shell112 {
+  height: 112px;
+}
+
+.offsetMinus34 {
+  left: calc(50% - 34px);
+}
+
+.offsetPlus34 {
+  left: calc(50% + 34px);
+}
+
+.offsetMinus38 {
+  left: calc(50% - 38px);
+}
+
+.offsetPlus38 {
+  left: calc(50% + 38px);
+}
+
+.offsetMinus30 {
+  left: calc(50% - 30px);
+}
+
+.offsetPlus30 {
+  left: calc(50% + 30px);
+}
+
+.offsetMinus42 {
+  left: calc(50% - 42px);
+}
+
+.offsetPlus24 {
+  left: calc(50% + 24px);
+}
+
+.shadowDoji {
+  box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.14);
+}
+
+.shadowHammer {
+  box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.12);
+}
+
+.shadowRose {
+  box-shadow: 0 0 0 8px rgba(244, 63, 94, 0.12);
+}
+
+.shadowRoseSoft {
+  box-shadow: 0 0 0 8px rgba(244, 63, 94, 0.08);
+}
+
+.shell20 {
+  height: 80px;
+}

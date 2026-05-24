@@ -17,6 +17,23 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Missing access token' }, { status: 401 })
   }
 
+  const syncResponse = await fetch(`${apiUrl}/auth/sync`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: session.user.email,
+      name: session.user.name ?? session.user.nickname ?? 'Trader',
+      picture: session.user.picture,
+      auth0Id: session.user.sub,
+    }),
+  })
+
+  if (!syncResponse.ok) {
+    return NextResponse.json({ error: 'Failed to sync user' }, { status: syncResponse.status })
+  }
+
   const url = new URL(`${apiUrl}/trading/pairs`)
   const q = new URL(request.url).searchParams.get('q')
   if (q) url.searchParams.set('q', q)

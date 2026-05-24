@@ -11,7 +11,7 @@ const steps = [
     subtitle: "Tu espacio seguro para aprender trading de forex",
     description: "Este es un entorno de práctica con dinero virtual. Nada de lo que hagas aquí afecta fondos reales. Explora con libertad y comete errores sin preocupación.",
     icon: Shield,
-    tip: "Empiezas con $10,000 en moneda virtual para practicar.",
+    tip: "Empiezas con $1,000 en moneda virtual para practicar.",
   },
   {
     id: 1,

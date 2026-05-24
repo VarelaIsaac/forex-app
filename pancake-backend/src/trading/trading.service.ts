@@ -343,7 +343,7 @@ export class TradingService {
       .sort((a, b) => a.closedAt!.getTime() - b.closedAt!.getTime());
 
     // Start with initial balance and track how it changed over time
-    let runningBalance = 10000; // Assuming starting balance
+    let runningBalance = 1000; // Assuming starting balance
     const growthHistory: Array<{ date: Date; balance: number; tradeId: number | null }> = [{
       date: portfolio.createdAt || new Date(),
       balance: runningBalance,
@@ -368,9 +368,9 @@ export class TradingService {
 
     return {
       currentBalance: Number(portfolio.balance),
-      startingBalance: 10000,
-      totalGrowth: Number(portfolio.balance) - 10000,
-      growthPercentage: ((Number(portfolio.balance) - 10000) / 10000) * 100,
+      startingBalance: 1000,
+      totalGrowth: Number(portfolio.balance) - 1000,
+      growthPercentage: ((Number(portfolio.balance) - 1000) / 1000) * 100,
       history: growthHistory,
     };
   }

@@ -43,7 +43,7 @@ export class PortfolioController {
       example: {
         id: 1,
         userId: 1,
-        balance: 10000.00,
+        balance: 1000.00,
         currency: 'USD',
         createdAt: '2026-02-17T12:00:00.000Z',
       },
@@ -165,7 +165,7 @@ export class PortfolioController {
   }
   @ApiOperation({
     summary: 'Reset demo portfolio',
-    description: 'Reset demo account balance to $10,000 and close all open trades (demo accounts only)',
+    description: 'Reset demo account balance to $1,000 and close all open trades (demo accounts only)',
   })
   @ApiResponse({
     status: 200,
@@ -191,7 +191,7 @@ export class PortfolioController {
     const portfolio = await this.portfolioService.resetDemoPortfolio(req.user.userId);
     return {
       success: true,
-      message: 'Demo portfolio has been reset to $10,000',
+      message: 'Demo portfolio has been reset to $1,000',
       portfolio,
     };
   }

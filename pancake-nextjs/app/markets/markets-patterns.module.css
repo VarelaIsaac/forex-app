@@ -1,0 +1,39 @@
+.cardShell {
+  border-radius: 18px;
+  background: #0b1220;
+}
+
+.shadowDoji {
+  box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.14);
+}
+
+.shadowHammer {
+  box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.12);
+}
+
+.offsetMinus28 {
+  left: calc(50% - 28px);
+}
+
+.offsetPlus28 {
+  left: calc(50% + 28px);
+}
+
+.offsetMinus34 {
+  left: calc(50% - 34px);
+}
+
+.offsetPlus24 {
+  left: calc(50% + 24px);
+}
+
+.cardMinWidth {
+  min-width: 330px;
+}
+
+.visualLabel {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}

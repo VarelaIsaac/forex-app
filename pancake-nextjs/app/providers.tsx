@@ -5,6 +5,7 @@ import { TradesProvider } from "@/contexts/trades-context"
 import { LanguageProvider } from "@/contexts/language-context"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
+import { TutorialHost } from "@/components/tutorial/tutorial-host"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <LanguageProvider>
           <TradesProvider>
             {children}
+            <TutorialHost />
             <Toaster />
           </TradesProvider>
         </LanguageProvider>

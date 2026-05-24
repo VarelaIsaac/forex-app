@@ -6,9 +6,16 @@ import { useUser } from "@auth0/nextjs-auth0/client"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { HelpPanel } from "@/components/dashboard/help-panel"
-import { TutorialGuide, type TutorialStep } from "@/components/tutorial/tutorial-guide"
+import { type TutorialStep } from "@/components/tutorial/tutorial-guide"
 import { useTranslate } from "@/hooks/use-translate"
 import { useLearning } from "@/hooks/use-learning"
+import styles from "./lesson-visuals.module.css"
+
+type LessonVisual = "doji" | "hammer" | "engulfing" | "structure"
+
+type LessonStep = TutorialStep & {
+  visual?: LessonVisual
+}
 
 const lessonContent: Record<
   string,
@@ -16,7 +23,7 @@ const lessonContent: Record<
     title: string
     description: string
     fullDescription: string
-    steps: TutorialStep[]
+    steps: LessonStep[]
   }
 > = {
   "forex-basics": {
@@ -131,26 +138,30 @@ const lessonContent: Record<
         title: "The Doji Candle",
         description:
           "A Doji candle has an open and close at nearly the same price, creating a small body with long wicks. It signals indecision in the market.",
-        action: "Watch for Doji candles in the Markets section",
+        action: "Open Markets and look for the Doji example card",
         elementSelector: "[href='/markets']",
+        visual: "doji",
       },
       {
         title: "Hammer and Hanging Man",
         description:
           "A Hammer has a small body at the top with a long wick below. It signals a potential reversal from downtrend to uptrend. Hanging Man is the opposite - reversal from uptrend to down.",
         action: "Practice identifying these patterns on historical charts",
+        visual: "hammer",
       },
       {
         title: "Engulfing Patterns",
         description:
           "A bullish engulfing has a small red candle followed by a larger green candle that completely covers it. This signals a potential upward reversal.",
         action: "Look for both bullish and bearish engulfing patterns in your trades",
+        visual: "engulfing",
       },
       {
         title: "Using Patterns in Trading",
         description:
           "Candlestick patterns are most reliable when combined with support/resistance levels. Never trade a pattern in isolation - confirm with trend and levels.",
         action: "Before your next trade, identify a pattern and a key level to confirm entry",
+        visual: "structure",
       },
     ],
   },
@@ -222,6 +233,124 @@ const lessonContent: Record<
   },
 }
 
+function PatternVisual({
+  visual,
+  label,
+  description,
+}: {
+  visual: LessonVisual
+  label: string
+  description: string
+}) {
+  const panelClassName = `${styles.panel} border border-border/70 bg-[#0b1220] p-4`
+
+  const chartShell = (children: React.ReactNode) => (
+    <div className="rounded-2xl border border-border/60 bg-card p-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className={`${panelClassName} flex-1`}>{children}</div>
+        <div className={styles.metaColumn}>
+          <p className={`font-semibold uppercase tracking-[0.22em] text-primary/90 ${styles.smallLabel}`}>{label}</p>
+          <p className="mt-3 text-sm text-muted-foreground leading-6">{description}</p>
+        </div>
+      </div>
+    </div>
+  )
+
+  if (visual === "doji") {
+    return chartShell(
+      <div className="flex h-full items-center justify-center">
+        <div className={`relative flex w-full items-center justify-center ${styles.shell108}`}>
+          <span className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-white/10" />
+          <span className={`absolute top-5 h-16 w-px bg-white/10 ${styles.offsetMinus34}`} />
+          <span className={`absolute top-5 h-16 w-px bg-white/10 ${styles.offsetPlus34}`} />
+          <span className={`absolute left-1/2 top-8 h-3 w-12 -translate-x-1/2 rounded-full bg-sky-500 ${styles.shadowDoji}`} />
+          <span className="absolute left-1/2 top-2 h-8 w-px -translate-x-1/2 bg-white/20" />
+          <span className="absolute left-1/2 bottom-2 h-8 w-px -translate-x-1/2 bg-white/20" />
+        </div>
+      </div>
+    )
+  }
+
+  if (visual === "hammer") {
+    return chartShell(
+      <div className="flex h-full items-center justify-center">
+        <div className={`relative flex w-full items-center justify-center ${styles.shell112}`}>
+          <span className={`absolute top-3 h-20 w-px bg-white/10 ${styles.offsetMinus34}`} />
+          <span className="absolute left-1/2 top-2 h-24 w-px -translate-x-1/2 bg-white/10" />
+          <span className={`absolute top-3 h-20 w-px bg-white/10 ${styles.offsetPlus34}`} />
+
+          <div className={`absolute top-9 flex flex-col items-center gap-1 text-center ${styles.offsetMinus38}`}>
+            <span className={`uppercase tracking-[0.18em] text-white/40 ${styles.smallLabel}`}>Hammer</span>
+            <span className={`relative h-10 w-10 rounded-full bg-emerald-500 ${styles.shadowHammer}`}>
+              <span className="absolute left-1/2 top-full h-8 w-px -translate-x-1/2 bg-white/20" />
+            </span>
+            <span className="h-1.5 w-8 rounded-full bg-emerald-500" />
+          </div>
+
+          <div className={`absolute top-9 flex flex-col items-center gap-1 text-center ${styles.offsetPlus38}`}>
+            <span className={`uppercase tracking-[0.18em] text-white/40 ${styles.smallLabel}`}>Hanging Man</span>
+            <span className={`relative h-10 w-10 rounded-full bg-rose-500 ${styles.shadowRose}`}>
+              <span className="absolute left-1/2 top-full h-8 w-px -translate-x-1/2 bg-white/20" />
+            </span>
+            <span className="h-1.5 w-8 rounded-full bg-rose-500" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (visual === "engulfing") {
+    return chartShell(
+      <div className="flex h-full items-center justify-center">
+        <div className={`relative flex w-full items-center justify-center ${styles.shell112}`}>
+          <span className={`absolute top-4 h-16 w-px bg-white/10 ${styles.offsetMinus30}`} />
+          <span className={`absolute top-2 h-20 w-px bg-white/10 ${styles.offsetPlus30}`} />
+
+          <div className={`absolute top-10 flex flex-col items-center gap-1 text-center ${styles.offsetMinus42}`}>
+            <span className={`uppercase tracking-[0.18em] text-white/40 ${styles.smallLabel}`}>Previo</span>
+            <span className={`relative h-6 w-6 rounded-sm bg-rose-500 ${styles.shadowRoseSoft}`}>
+              <span className="absolute left-1/2 top-full h-7 w-px -translate-x-1/2 bg-white/20" />
+              <span className="absolute left-1/2 bottom-full h-5 w-px -translate-x-1/2 bg-white/20" />
+            </span>
+          </div>
+
+          <div className={`absolute top-6 flex flex-col items-center gap-1 text-center ${styles.offsetPlus34}`}>
+            <span className={`uppercase tracking-[0.18em] text-white/40 ${styles.smallLabel}`}>Engulfing</span>
+            <span className={`relative h-12 w-10 rounded-sm bg-emerald-500 ${styles.shadowHammer}`}>
+              <span className="absolute left-1/2 top-full h-6 w-px -translate-x-1/2 bg-white/20" />
+              <span className="absolute left-1/2 bottom-full h-5 w-px -translate-x-1/2 bg-white/20" />
+            </span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    chartShell(
+      <div className="flex h-full items-center justify-center">
+        <div className={`relative flex w-full items-center justify-center ${styles.shell112}`}>
+          <span className={`absolute top-2 h-20 w-px bg-white/10 ${styles.offsetMinus38}`} />
+          <span className="absolute left-1/2 top-2 h-24 w-px -translate-x-1/2 bg-white/10" />
+          <span className={`absolute top-2 h-20 w-px bg-white/10 ${styles.offsetPlus38}`} />
+
+          <div className={`absolute top-8 flex flex-col items-center gap-1 text-center ${styles.offsetMinus30}`}>
+            <span className={`uppercase tracking-[0.18em] text-white/40 ${styles.smallLabel}`}>Trend</span>
+            <span className="h-8 w-1 rounded-full bg-emerald-500/90" />
+            <span className="h-5 w-8 rounded-full bg-emerald-500/90" />
+          </div>
+
+          <div className={`absolute top-8 flex flex-col items-center gap-1 text-center ${styles.offsetPlus34}`}>
+            <span className={`uppercase tracking-[0.18em] text-white/40 ${styles.smallLabel}`}>Support</span>
+            <span className="mt-2 h-1 w-10 rounded-full bg-sky-500/80" />
+            <span className={`uppercase tracking-[0.18em] text-white/40 ${styles.smallLabel}`}>Confirm</span>
+          </div>
+        </div>
+      </div>
+    )
+  )
+}
+
 export default function LessonPage() {
   const { user, isLoading } = useUser()
   const router = useRouter()
@@ -230,7 +359,6 @@ export default function LessonPage() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
-  const [showTutorial, setShowTutorial] = useState(false)
 
   const lesson = lessonContent[lessonId]
   const { t } = useTranslate()
@@ -246,6 +374,7 @@ export default function LessonPage() {
           description: t(`lesson.${lessonId}.steps.${i}.description`) || s.description,
           action: t(`lesson.${lessonId}.steps.${i}.action`) || s.action,
           elementSelector: s.elementSelector,
+          visual: s.visual,
         })),
       }
     : null
@@ -310,16 +439,36 @@ export default function LessonPage() {
 
             <section className="rounded-2xl bg-card border border-border p-5">
               <h3 className="text-lg font-semibold text-foreground mb-4">{t("lesson-overview")}</h3>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {translatedLesson?.steps.map((step, idx) => (
-                  <div key={idx} className="flex gap-3 pb-3 border-b border-muted/40 last:border-b-0">
-                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-semibold text-primary">
-                      {idx + 1}
+                  <div key={idx} className="pb-4 border-b border-muted/40 last:border-b-0 last:pb-0">
+                    <div className="flex gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-semibold text-primary shrink-0">
+                        {idx + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-foreground">{step.title}</p>
+                        <p className="text-sm text-muted-foreground">{step.description}</p>
+                        <p className="mt-2 text-xs font-medium text-primary">{step.action}</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-foreground">{step.title}</p>
-                      <p className="text-sm text-muted-foreground">{step.description}</p>
-                    </div>
+                    {step.visual && (
+                      <div className="mt-4">
+                        <PatternVisual
+                          visual={step.visual}
+                          label={t("visual-example")}
+                          description={
+                            step.visual === "doji"
+                              ? t("visual-doji")
+                              : step.visual === "hammer"
+                                ? t("visual-hammer")
+                                : step.visual === "engulfing"
+                                  ? t("visual-engulfing")
+                                  : t("visual-context")
+                          }
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -371,23 +520,6 @@ export default function LessonPage() {
 
       <HelpPanel open={helpOpen} onClose={() => setHelpOpen(false)} />
 
-      {showTutorial && (
-        <TutorialGuide
-          title={translatedLesson?.title ?? lesson.title}
-          description={translatedLesson?.description ?? lesson.description}
-          steps={translatedLesson?.steps ?? lesson.steps}
-          onComplete={async () => {
-            setShowTutorial(false)
-            try {
-              await saveProgress(lessonId, 100, true)
-            } catch (e) {
-              // ignore
-            }
-            router.push("/learn")
-          }}
-          onBack={() => setShowTutorial(false)}
-        />
-      )}
     </div>
   )
 }

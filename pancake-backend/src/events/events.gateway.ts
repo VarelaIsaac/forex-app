@@ -9,7 +9,7 @@ import {
   ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, OnModuleDestroy } from '@nestjs/common';
 import { TwelveDataService } from '../twelve-data/twelve-data.service';
 
 @WebSocketGateway({
@@ -17,19 +17,25 @@ import { TwelveDataService } from '../twelve-data/twelve-data.service';
     origin: '*', // Configure this properly in production
   },
 })
-export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleDestroy {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private subscribedPairs: Map<string, Set<string>> = new Map(); // clientId -> Set of pairs
-  private priceUpdateInterval: NodeJS.Timeout;
+  private priceUpdateInterval!: NodeJS.Timeout;
 
   constructor(private twelveDataService: TwelveDataService) {}
 
   afterInit() {
     console.log('✅ WebSocket Gateway initialized');
-    // Start broadcasting price updates every 5 seconds
+    // Start broadcasting price updates every 20 seconds
     this.startPriceUpdates();
+  }
+
+  onModuleDestroy() {
+    if (this.priceUpdateInterval) {
+      clearInterval(this.priceUpdateInterval);
+    }
   }
 
   handleConnection(client: Socket) {
@@ -104,7 +110,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       } catch (error) {
         console.error('Error fetching price updates:', error);
       }
-    }, 5000); // Update every 5 seconds
+    }, 20000); // Update every 20 seconds
   }
 
   /**

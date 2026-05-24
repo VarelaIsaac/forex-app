@@ -54,7 +54,7 @@ export default function WalletPage() {
             </div>
             <div className="rounded-xl border border-border bg-muted/40 p-4 mt-5">
               <p className="text-xs text-muted-foreground">Fondos disponibles</p>
-              <p className="text-2xl font-semibold text-foreground mt-1">$10,000.00</p>
+              <p className="text-2xl font-semibold text-foreground mt-1">$1,000.00</p>
             </div>
           </section>
 

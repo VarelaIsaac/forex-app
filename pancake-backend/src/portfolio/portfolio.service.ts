@@ -18,7 +18,7 @@ export class PortfolioService {
   /**
    * Create a new portfolio for a user
    */
-  async createPortfolio(userId: string, initialBalance: number = 10000): Promise<Portfolio> {
+  async createPortfolio(userId: string, initialBalance: number = 1000): Promise<Portfolio> {
     return await this.prisma.portfolio.create({
       data: {
         userId,
@@ -151,7 +151,7 @@ export class PortfolioService {
    * Reset demo portfolio balance to initial amount and close all trades
    * Can only be used for demo accounts
    */
-  async resetDemoPortfolio(userId: string, initialBalance: number = 10000): Promise<Portfolio> {
+  async resetDemoPortfolio(userId: string, initialBalance: number = 1000): Promise<Portfolio> {
     const portfolio = await this.getPortfolioByUserId(userId);
 
     // Close any active custom sessions and zero their balances

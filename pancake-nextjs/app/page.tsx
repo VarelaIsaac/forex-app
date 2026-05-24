@@ -12,7 +12,6 @@ import { MarketWatch } from "@/components/dashboard/market-watch"
 import { QuickTrade } from "@/components/dashboard/quick-trade"
 import { RecentTrades } from "@/components/dashboard/recent-trades"
 import { LearningHub } from "@/components/dashboard/learning-hub"
-import { TutorialGuide, type TutorialStep } from "@/components/tutorial/tutorial-guide"
 import { useTranslate } from "@/hooks/use-translate"
 import { useLearning } from "@/hooks/use-learning"
 import { HelpPanel } from "@/components/dashboard/help-panel"
@@ -28,30 +27,35 @@ export default function DashboardPage() {
   }, [user, isLoading, router])
 
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [showOnboarding, setShowOnboarding] = useState(true)
+  const [showOnboarding, setShowOnboarding] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
   const [onboardingStep, setOnboardingStep] = useState(0)
   const { t } = useTranslate()
-  const { saveProgress } = useLearning()
-  const [showGuided, setShowGuided] = useState(false)
-  const [guidedPayload, setGuidedPayload] = useState<null | { title: string; description?: string; steps: TutorialStep[] }>(null)
+
+  const onboardingStorageKey = `pancake:onboarding-completed:${user?.sub ?? user?.email ?? "guest"}`
 
   useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem("guidedTutorial")
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        if (parsed && parsed.steps) {
-          setGuidedPayload(parsed)
-          setShowGuided(true)
-        }
-      }
-    } catch (e) {
-      // ignore
+    if (isLoading || !user) {
+      return
     }
-  }, [])
 
-  const completeOnboarding = () => setShowOnboarding(false)
+    try {
+      const completed = localStorage.getItem(onboardingStorageKey) === "true"
+      setShowOnboarding(!completed)
+    } catch {
+      setShowOnboarding(true)
+    }
+  }, [isLoading, user, onboardingStorageKey])
+
+  const completeOnboarding = () => {
+    setShowOnboarding(false)
+
+    try {
+      localStorage.setItem(onboardingStorageKey, "true")
+    } catch {
+      // ignore storage errors
+    }
+  }
 
   if (isLoading || !user) {
     return (
@@ -83,43 +87,22 @@ export default function DashboardPage() {
 
           <StatsRow showTutorialHighlight={showOnboarding && onboardingStep === 1} />
 
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-            <div className="xl:col-span-2 space-y-5">
+          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,2fr)_minmax(340px,1fr)] gap-5">
+            <div className="space-y-5">
               <CurrencyChart showTutorialHighlight={showOnboarding && onboardingStep === 2} />
               <RecentTrades />
             </div>
             <div className="space-y-5">
               <QuickTrade showTutorialHighlight={showOnboarding && onboardingStep === 3} />
               <MarketWatch />
-              <LearningHub />
             </div>
           </div>
+
+          <LearningHub />
         </main>
       </div>
 
       <HelpPanel open={helpOpen} onClose={() => setHelpOpen(false)} />
-      {showGuided && guidedPayload && (
-        <TutorialGuide
-          title={guidedPayload.title}
-          description={guidedPayload.description}
-          steps={guidedPayload.steps}
-          onBack={() => {
-            setShowGuided(false)
-            sessionStorage.removeItem("guidedTutorial")
-          }}
-          onComplete={async () => {
-            setShowGuided(false)
-            try {
-              if (guidedPayload && (guidedPayload as any).lessonId) {
-                await saveProgress((guidedPayload as any).lessonId, 100, true)
-              }
-            } catch (e) {
-              // ignore
-            }
-            sessionStorage.removeItem("guidedTutorial")
-          }}
-        />
-      )}
     </div>
   )
 }

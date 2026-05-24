@@ -21,7 +21,7 @@ export function WelcomeBanner({ onDismiss }: WelcomeBannerProps) {
   return (
     <div className="relative rounded-xl border border-primary/25 bg-primary/8 overflow-hidden">
       {/* Subtle background glow */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-r from-primary/5 to-transparent pointer-events-none" />
 
       <div className="relative p-5">
         <button
@@ -43,7 +43,7 @@ export function WelcomeBanner({ onDismiss }: WelcomeBannerProps) {
                 Bienvenido a Pancake: estás en modo práctica
               </h2>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed max-w-lg">
-                Estás operando con <span className="text-warning font-medium">$10,000 de dinero virtual</span>. Nada de lo que hagas aquí cuesta dinero real. Explora con libertad y aprende a tu ritmo.
+                Estás operando con <span className="text-warning font-medium">$1,000 de dinero virtual</span>. Nada de lo que hagas aquí cuesta dinero real. Explora con libertad y aprende a tu ritmo.
               </p>
 
               {/* Progress */}

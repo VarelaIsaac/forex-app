@@ -27,7 +27,7 @@ interface TradesContextType {
 const TradesContext = createContext<TradesContextType | undefined>(undefined)
 
 export function TradesProvider({ children }: { children: React.ReactNode }) {
-  const INITIAL_BALANCE = 10000
+  const INITIAL_BALANCE = 1000
   const [trades, setTrades] = useState<Trade[]>([])
   const [balance, setBalance] = useState(INITIAL_BALANCE)
 

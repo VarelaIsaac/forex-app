@@ -29,8 +29,8 @@ export class AuthService {
     // Create the user
     const user = await this.usersService.createUser(email, passwordHash, nombre, isDemoAccount);
 
-    // Create a portfolio for the new user with $10,000 starting balance
-    await this.portfolioService.createPortfolio(user.id, 10000);
+    // Create a portfolio for the new user with $1,000 starting balance
+    await this.portfolioService.createPortfolio(user.id, 1000);
 
     // Generate JWT token
     const payload = { sub: user.id, email: user.email };
